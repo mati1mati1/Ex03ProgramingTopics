@@ -1,0 +1,5 @@
+house-tooManyCharging
+MaxSteps =100
+Rows = 1
+Cols = 4
+D123

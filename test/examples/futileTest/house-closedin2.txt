@@ -1,0 +1,8 @@
+house-lockedin
+MaxSteps =100
+MaxBattery = 10
+Rows = 3
+Cols = 5
+W1W1W
+1WDW1
+W1W1W

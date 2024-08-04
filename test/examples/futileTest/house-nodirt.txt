@@ -1,0 +1,8 @@
+house-minvalid
+MaxSteps = 100
+MaxBattery = 100
+Rows = 3
+Cols = 3
+ 0
+0D0
+ 0

@@ -1,0 +1,6 @@
+house-tooManyCharging
+MaxBattery = 10
+MaxSteps =100
+Rows = 1
+Cols = 4
+D123

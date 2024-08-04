@@ -1,0 +1,6 @@
+house-noCharging
+MaxSteps =100
+MaxBattery = 10
+Rows = 1
+Cols = 5
+123WW

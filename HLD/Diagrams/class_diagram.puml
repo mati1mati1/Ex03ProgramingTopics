@@ -1,0 +1,162 @@
+@startuml
+interface AlgorithmConfig {
+    +AlgorithmType getType()
+}
+class MappingAlgorithmConfig {
+    +AlgorithmType getType()
+}
+AlgorithmConfig <|-- MappingAlgorithmConfig
+
+interface AbstractAlgorithm {
+    +void setMaxSteps(size_t maxSteps)
+    +void setWallsSensor(const WallsSensor&)
+    +void setDirtSensor(const DirtSensor&)
+    +void setBatteryMeter(const BatteryMeter&)
+    +Step nextStep()
+}
+class MappingAlgorithm {
+    +void setMaxSteps(size_t maxSteps)
+    +void setWallsSensor(const WallsSensor&)
+    +void setDirtSensor(const DirtSensor&)
+    +void setBatteryMeter(const BatteryMeter&)
+    +Step nextStep()
+}
+AbstractAlgorithm <|-- MappingAlgorithm
+DirtSensor <|-- AbstractAlgorithm
+BatteryMeter <|-- AbstractAlgorithm
+WallsSensor <|-- AbstractAlgorithm
+AlgorithmFactory --> AbstractAlgorithm
+MappingAlgorithm -> MappingGraph
+VacuumSimulator -> cleaningRecord
+class AlgorithmFactory {
+    +static unique_ptr<AbstractAlgorithm> createAlgorithm(const AlgorithmConfig& config)
+}
+AlgorithmConfig --> AlgorithmFactory
+
+interface BatteryMeter {
+    +size_t getBatteryState() const
+}
+class MeteredVacuumBattery {
+    +void charge(uint32_t steps)
+    +bool try_activate(uint32_t steps)
+    +size_t getBatteryState() const
+}
+BatteryMeter <|-- MeteredVacuumBattery
+
+class CleaningRecord {
+    +void add(CleaningRecordStep step)
+    +const shared_ptr<CleaningRecordStep> getInitialStep() const
+    +const shared_ptr<CleaningRecordStep> last() const
+    +uint32_t size() const
+}
+class CleaningRecordStep {
+    +const LocationType& getLocationType() const
+    +const Step& getStep() const
+    +uint32_t getBatteryLevel() const
+    +uint32_t getDirtLevel() const
+}
+CleaningRecord --> CleaningRecordStep
+
+class Coordinate<TCoordinateType> {
+    +TCoordinateType getX() const
+    +TCoordinateType getY() const
+}
+class Direction {}
+class Step {}
+
+interface DirtSensor {
+    +int dirtLevel() const
+}
+
+interface WallsSensor {
+    +bool isWall(Direction d) const
+}
+
+class House {
+    +uint32_t getTotalDirt() const
+}
+class PlacedHouse {
+    +HouseLocation& getCurrentLocation()
+    +HouseLocation& getDirectionLocation(const Direction& direction)
+    +bool is_move(const Direction& direction)
+    +void move(const Direction& direction)
+}
+House <|-- PlacedHouse
+
+class VacuumHouse {
+    +uint32_t getTotalDirt() const
+    +HouseLocation& getCurrentLocation()
+    +const HouseLocation& getCurrentLocation() const
+    +HouseLocation& getDirectionLocation(const Direction& direction)
+    +const HouseLocation& getDirectionLocation(const Direction& direction) const
+    +bool isWall(Direction d) const
+    +int dirtLevel() const
+}
+PlacedHouse <|-- VacuumHouse
+DirtSensor <|-- VacuumHouse
+WallsSensor <|-- VacuumHouse
+
+class HouseLocation {
+    +const LocationType& getLocationType() const
+    +uint8_t getDirtLevel() const
+    +void setDirtLevel(uint8_t dirtLevel)
+}
+enum LocationType {
+    WALL
+    CHARGING_STATION
+    HOUSE_TILE
+    UNKNOWN
+}
+
+class Logger {
+    +void log(const T& obj)
+    +void setLogStream(ostream* stream)
+    +void resetLogStream()
+    +void setLogFile(const string& filePath)
+}
+VacuumSimulator --> Logger
+
+class MappingGraph {
+    +void addEdge(Coordinate<int32_t> v, Direction direction)
+    +void addVertex(const HouseLocationMapping& location)
+    +HouseLocationMapping& getVertex(Coordinate<int32_t> location)
+}
+class HouseLocationMapping {
+    +Coordinate<int32_t> getRelativeToCharger() const
+    +HouseLocation& getHouseLocation()
+    +const HouseLocation& getHouseLocation() const
+}
+MappingGraph --> HouseLocationMapping
+
+class OutFileWriter {
+    +path write(const path& inputFileName, const shared_ptr<CleaningRecord> record)
+}
+VacuumSimulator --> OutFileWriter
+
+class VacuumParser {
+    +unique_ptr<VacuumPayload> parse(const path& fileInputpath)
+}
+class VacuumPayload {
+    +VacuumHouse& getHouse()
+    +MeteredVacuumBattery& getBattery()
+    +uint32_t getMaxSteps() const
+}
+VacuumParser --> VacuumPayload
+VacuumPayload --> VacuumHouse
+VacuumPayload --> MeteredVacuumBattery
+
+class Simulator {
+    +void run()
+}
+class VacuumSimulator {
+    +void run()
+    +shared_ptr<CleaningRecord> calculate()
+    +void setAlgorithm(const shared_ptr<AlgorithmConfig> config)
+    +void readHouseFile(const path& fileInputpath)
+}
+Simulator <|-- VacuumSimulator
+AlgorithmConfig --> VacuumSimulator
+VacuumPayload --> VacuumSimulator
+AlgorithmFactory --> VacuumSimulator
+
+@enduml

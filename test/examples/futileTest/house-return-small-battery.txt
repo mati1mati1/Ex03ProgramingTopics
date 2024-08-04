@@ -1,0 +1,6 @@
+house-smallbattery
+MaxSteps =200
+MaxBattery = 2
+Rows = 1
+Cols = 2
+D9

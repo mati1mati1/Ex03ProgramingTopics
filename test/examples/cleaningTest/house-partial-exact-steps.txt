@@ -1,0 +1,9 @@
+house
+MaxSteps =32
+MaxBattery = 200
+Rows = 4
+Cols = 6
+WWWWWW
+W89W8W
+WD9W9W
+WWWWWW

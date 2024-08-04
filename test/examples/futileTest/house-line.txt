@@ -1,0 +1,6 @@
+house-line
+MaxSteps = 1000
+MaxBattery = 5
+Rows = 1
+Cols = 4
+D009

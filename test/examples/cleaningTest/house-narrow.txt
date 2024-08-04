@@ -1,0 +1,7 @@
+house-narrow
+MaxSteps =100000
+MaxBattery = 100000
+Rows = 2
+Cols = 5
+W111W
+D1W11

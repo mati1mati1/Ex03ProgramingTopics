@@ -1,0 +1,8 @@
+house-closedin
+MaxSteps =10
+MaxBattery = 5
+Rows = 3
+Cols = 3
+ W
+WDW
+ W

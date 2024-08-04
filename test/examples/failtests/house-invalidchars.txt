@@ -1,0 +1,7 @@
+house-empty
+MaxSteps =-10
+MaxBattery = 5
+Rows = 3
+Cols = 3
+a21231
+x12313

@@ -1,0 +1,37 @@
+@startuml
+actor User
+participant Main
+participant Logger
+participant VacuumSimulator
+participant Algorithm
+participant CleaningRecord
+participant AlgorithmFactory
+participant OutFileWriter
+
+User -> Main: Run Program
+Main -> Logger: setLogFile
+Main -> Main: Process command-line arguments
+Main -> VacuumSimulator: setAlgorithm(config)
+Main -> VacuumSimulator: readHouseFile(inputFilePath)
+Main -> VacuumSimulator: run()
+activate VacuumSimulator
+VacuumSimulator -> VacuumSimulator: calculate()
+VacuumSimulator -> AlgorithmFactory: createAlgorithm(config)
+VacuumSimulator <- AlgorithmFactory: Algorithm
+
+activate VacuumSimulator
+    loop until termination condition
+        VacuumSimulator -> Algorithm: step(data)
+        activate Algorithm
+        Algorithm --> VacuumSimulator: Step
+        deactivate Algorithm
+        VacuumSimulator -> CleaningRecord: addStep(step)
+    end
+VacuumSimulator --> VacuumSimulator: record
+deactivate VacuumSimulator
+
+VacuumSimulator -> OutFileWriter: write(outPutFilePath.parent_path(),record)
+VacuumSimulator --> Main: Cleaning record saved
+deactivate VacuumSimulator
+Main -> User: Display Result
+@enduml

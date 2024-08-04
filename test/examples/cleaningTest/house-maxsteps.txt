@@ -1,0 +1,6 @@
+house-maxsteps
+MaxSteps =5
+MaxBattery = 100
+Rows = 1
+Cols = 2
+D9
