@@ -14,7 +14,7 @@ protected:
         Logger::getInstance().setLogFile(logFilePath);
 
         CleaningRecordStep initialStep = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 5, 10);
-        record = std::make_shared<CleaningRecord>(initialStep);
+        record = std::make_shared<CleaningRecord>(initialStep,10);
     }
 
     void TearDown() override {
@@ -37,6 +37,7 @@ TEST_F(OutFileWriterTest, WORKING) {
     std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
+    uint32_t score = 4 + 9 * 300 + 1000;
 
     std::ifstream outFile(outputFilePath);
     ASSERT_TRUE(outFile.is_open());
@@ -50,6 +51,12 @@ TEST_F(OutFileWriterTest, WORKING) {
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Status = WORKING");
+
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "InDock = FALSE");    
+    
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "Score = " + std::to_string(score));
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Steps: ");
@@ -73,7 +80,7 @@ TEST_F(OutFileWriterTest, DEAD) {
     std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
-
+    uint32_t score = 10 + 9 * 300 + 2000;
     std::ifstream outFile(outputFilePath);
     ASSERT_TRUE(outFile.is_open());
 
@@ -86,6 +93,12 @@ TEST_F(OutFileWriterTest, DEAD) {
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Status = DEAD");
+    
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "InDock = FALSE");    
+    
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "Score = " + std::to_string(score));
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Steps: ");
@@ -103,6 +116,7 @@ TEST_F(OutFileWriterTest, WithoutStep) {
     std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
+    uint32_t score = 0 + 10 * 300 + 0;
 
     std::ifstream outFile(outputFilePath);
     ASSERT_TRUE(outFile.is_open());
@@ -116,6 +130,12 @@ TEST_F(OutFileWriterTest, WithoutStep) {
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Status = WORKING");
+
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "InDock = TRUE");    
+    
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "Score = " + std::to_string(score));
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Steps: ");
@@ -146,7 +166,7 @@ TEST_F(OutFileWriterTest, FINISHED) {
     std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
-
+    uint32_t score = 12 + 0 * 300 + 0;
     std::ifstream outFile(outputFilePath);
     ASSERT_TRUE(outFile.is_open());
 
@@ -159,6 +179,12 @@ TEST_F(OutFileWriterTest, FINISHED) {
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Status = FINISHED");
+
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "InDock = TRUE");    
+    
+    std::getline(outFile, line);
+    EXPECT_EQ(line, "Score = " + std::to_string(score));
 
     std::getline(outFile, line);
     EXPECT_EQ(line, "Steps: ");

@@ -10,4 +10,6 @@ private:
     const std::filesystem::path getFileName(const std::filesystem::path &fileOutputDirectory);
     void writeOutfile(std::ofstream &outFile, const std::filesystem::path &fileOutputpath, const std::shared_ptr<CleaningRecord> record);
     void createDirectoryIfNotExists(const std::filesystem::path &fileOutputDirectory);
+    static std::string getStatusString(const std::shared_ptr<CleaningRecordStep>& step);
+    uint32_t getScore(const std::string status, const std::shared_ptr<CleaningRecord> record, bool inDock);
 };

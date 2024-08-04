@@ -1,7 +1,7 @@
 #include "CleaningRecord.hpp"
 #include "Logger.hpp"
 
-CleaningRecord::CleaningRecord(CleaningRecordStep initialStep) : hasInitialStep(true)
+CleaningRecord::CleaningRecord(CleaningRecordStep initialStep, uint32_t maxSteps) : hasInitialStep(true) , MaxSteps(maxSteps)
 {
     Logger::getInstance().log("Initializing CleaningRecord");
     steps = std::vector<std::shared_ptr<CleaningRecordStep>>();

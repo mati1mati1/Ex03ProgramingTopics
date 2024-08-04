@@ -1,6 +1,7 @@
 #pragma once
 enum class AlgorithmType {
-    Mapping
+    Mapping,
+    Simultaneous
 };
 class AlgorithmConfig{
     public:

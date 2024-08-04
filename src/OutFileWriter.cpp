@@ -27,23 +27,14 @@ void OutFileWriter::writeOutfile(std::ofstream &outFile, const std::filesystem::
     {
         
         auto recordLast = record->last();
-
+        auto status = getStatusString(recordLast);
+        auto inDock = recordLast->getLocationType() == LocationType::CHARGING_STATION ;
+        auto score = getScore(status, record, inDock);
         outFile << "NumSteps = " << record->size() << std::endl;
         outFile << "DirtLeft = " << recordLast->getDirtLevel() << std::endl;
-
-        if (recordLast->getStep() == Step::Finish)
-        {
-            outFile << "Status = FINISHED" << std::endl;
-        }
-        else if (recordLast->getLocationType() != LocationType::CHARGING_STATION && recordLast->getBatteryLevel() == 0)
-        {
-            outFile << "Status = DEAD" << std::endl;
-        }
-        else
-        {
-            outFile << "Status = WORKING" << std::endl;
-        }
-
+        outFile << "Status = " << status << std::endl;
+        outFile << "InDock = " << (inDock ? "TRUE" : "FALSE") << std::endl;
+        outFile << "Score = " << score << std::endl;
         outFile << "Steps: \n" << *record << std::endl;
         outFile.close();
         Logger::getInstance().log("Results successfully saved to file: " + fileOutputpath.string());
@@ -66,4 +57,28 @@ void OutFileWriter::createDirectoryIfNotExists(const std::filesystem::path &file
         }
         
     }
+}
+
+std::string OutFileWriter::getStatusString(const std::shared_ptr<CleaningRecordStep>& step) {
+    if (step->getStep() == Step::Finish) {
+        return "FINISHED";
+    } else if (step->getLocationType() != LocationType::CHARGING_STATION && step->getBatteryLevel() == 0) {
+        return "DEAD";
+    } else {
+        return "WORKING";
+    }
+}
+
+uint32_t OutFileWriter::getScore(const std::string status, const std::shared_ptr<CleaningRecord> record, bool inDock) {
+        if (status == "DEAD"){
+            return record->getMaxSteps() + record->last()->getDirtLevel() * 300 + 2000;
+        }
+        else if (status == "FINISHED" && !inDock)
+        {
+            return record->getMaxSteps() + record->last()->getDirtLevel() * 300 + 3000;
+        }
+        else
+        {
+            return record->size() + record->last()->getDirtLevel() * 300 + (inDock ? 0 : 1000);
+        }
 }

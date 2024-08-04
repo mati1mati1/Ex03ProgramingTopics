@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
 #include <filesystem>
 #include <VacuumSimulator.hpp>
-#include <MappingAlgorithm/MappingAlgorithm.hpp>
+#include <MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.hpp>
 #include "Logger.hpp"
 #include <OutFileWriter.hpp>
-class MappingAlgorithmTest : public ::testing::Test {
+class SimultaneousMappingCleaningAlgorithmTest : public ::testing::Test {
     protected:
         void StartTest(std::filesystem::path inputfile, std::string filename)
         {
             Logger::getInstance().setLogFile("/tmp/myrobot/test.log");
             this->filename = filename;
             VacuumSimulator simulator;
-            auto config = std::make_shared<MappingAlgorithmConfig>();
+            auto config = std::make_shared<SimultaneousMappingCleaningAlgorithmConfig>();
             simulator.setAlgorithm(config);
             simulator.readHouseFile(inputfile);
             record = simulator.calculate();
@@ -34,9 +34,9 @@ class MappingAlgorithmTest : public ::testing::Test {
         std::string filename;
         std::shared_ptr<CleaningRecord> record;
 };
-class FutileTest : public MappingAlgorithmTest {};
-class MappingTest : public MappingAlgorithmTest {};
-class CleaningTest : public MappingAlgorithmTest {};
+class FutileTest : public SimultaneousMappingCleaningAlgorithmTest {};
+class MappingTest : public SimultaneousMappingCleaningAlgorithmTest {};
+class CleaningTest : public SimultaneousMappingCleaningAlgorithmTest {};
 
 TEST_F(FutileTest, minHouse) {
     StartTest("../test/examples/futileTest/house-minvalid.txt", "house-minvalid.txt");
