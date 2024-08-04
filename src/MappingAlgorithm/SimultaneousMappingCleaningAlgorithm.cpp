@@ -10,7 +10,8 @@ std::optional<Step> SimultaneousMappingCleaningAlgorithm::getStepTowardsClosestR
             bool canReachAndReturn = stepsUntilMustBeOnCharger(searchResult.getDistance()) + 1 > getLengthToCharger(coordinate);
             bool isDirtyTile = locationMapping.getHouseLocation().getLocationType() == LocationType::HOUSE_TILE &&
                                locationMapping.getHouseLocation().getDirtLevel() > 0;
-            return canReachAndReturn && isDirtyTile;
+            bool isUnmappedTile = locationMapping.getHouseLocation().getLocationType() == LocationType::UNKNOWN;                   
+            return canReachAndReturn && (isDirtyTile || isUnmappedTile);
         }
     ));
     if (iterator == results->end()) {

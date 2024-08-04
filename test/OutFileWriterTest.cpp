@@ -14,7 +14,7 @@ protected:
         Logger::getInstance().setLogFile(logFilePath);
 
         CleaningRecordStep initialStep = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 5, 10);
-        record = std::make_shared<CleaningRecord>(initialStep,10);
+        record = std::make_shared<CleaningRecord>(initialStep,10, "test");
     }
 
     void TearDown() override {

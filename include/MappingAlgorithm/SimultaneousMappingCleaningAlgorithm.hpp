@@ -14,5 +14,6 @@ class SimultaneousMappingCleaningAlgorithmConfig : public AlgorithmConfig {
 public:
     SimultaneousMappingCleaningAlgorithmConfig() { };
     AlgorithmType getType() const override { return AlgorithmType::Simultaneous; };
+    std::string getAlgorithmName() const override { return "SimultaneousMappingCleaningAlgorithm"; };
     ~SimultaneousMappingCleaningAlgorithmConfig() override = default;
 };

@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 project(house_cleaner)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+# if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+# endif()
 
 set(CXX g++)
 set(CMAKE_CXX_STANDARD 20)
@@ -108,7 +108,7 @@ add_gtest_executable(
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingGraph.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingAlgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/test/MappingAlgorithmTest.cpp
+  ${PROJECT_SOURCE_DIR}/test/SimultaneousMappingCleaningAlgorithmTest.cpp
 )
 add_gtest_executable(
   OutFileWriterTest
@@ -140,22 +140,22 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/main.cpp
 )
 
-add_library(MappingAlgorithmA SHARED
-  src/MappingAlgorithm/MappingAlgorithm.cpp
-  src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
-  src/MappingAlgorithm/MappingGraph.cpp
-  src/HouseLocation.cpp
-  src/Coordinate.cpp  
-)
+# add_library(MappingAlgorithmA SHARED
+#   src/MappingAlgorithm/MappingAlgorithm.cpp
+#   src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
+#   src/MappingAlgorithm/MappingGraph.cpp
+#   src/HouseLocation.cpp
+#   src/Coordinate.cpp  
+# )
 
-add_library(SimultaneousMappingCleaningAlgorithmB SHARED
-  src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
-  src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
-  src/MappingAlgorithm/MappingGraph.cpp
-  src/HouseLocation.cpp
-  src/Coordinate.cpp  
-)
+# add_library(SimultaneousMappingCleaningAlgorithmB SHARED
+#   src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
+#   src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
+#   src/MappingAlgorithm/MappingGraph.cpp
+#   src/HouseLocation.cpp
+#   src/Coordinate.cpp  
+# )
 
 
-target_include_directories(MappingAlgorithmA PRIVATE include)
-target_include_directories(SimultaneousMappingCleaningAlgorithmB PRIVATE include)
+# target_include_directories(MappingAlgorithmA PRIVATE include)
+# target_include_directories(SimultaneousMappingCleaningAlgorithmB PRIVATE include)

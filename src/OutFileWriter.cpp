@@ -10,16 +10,16 @@ std::filesystem::path OutFileWriter::write(const std::filesystem::path& inputFil
         Logger::getInstance().log("Error: No results to save.");
         return std::filesystem::path();
     }
-    const std::filesystem::path fileOutputpath = getFileName(inputFileName);
+    const std::filesystem::path fileOutputpath = getFileName(inputFileName, record->getAlgorithmName());
     Logger::getInstance().log("Saving results to: " + fileOutputpath.string());
     createDirectoryIfNotExists(inputFileName.parent_path());
     std::ofstream outFile(fileOutputpath);
     writeOutfile(outFile, fileOutputpath, record);
     return fileOutputpath;
 }
-const std::filesystem::path OutFileWriter::getFileName(const std::filesystem::path &fileOutputPath)
+const std::filesystem::path OutFileWriter::getFileName(const std::filesystem::path &fileOutputPath, const std::string &algorithmName)
 {
-   return fileOutputPath.parent_path() / (std::string("output_") + fileOutputPath.filename().c_str());
+   return fileOutputPath.parent_path() / (fileOutputPath.stem().string() + "-" + algorithmName + ".txt");
 }
 void OutFileWriter::writeOutfile(std::ofstream &outFile, const std::filesystem::path &fileOutputpath, const std::shared_ptr<CleaningRecord> record)
 {

@@ -36,7 +36,7 @@ std::shared_ptr<CleaningRecord> VacuumSimulator::calculate(){
     algorithm->setWallsSensor(runPayload.getHouse());
     algorithm->setDirtSensor(runPayload.getHouse());
     algorithm->setMaxSteps(runPayload.getMaxSteps());
-    auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay,runPayload.getBattery().getBatteryState(),runPayload.getHouse().getTotalDirt()),runPayload.getMaxSteps());
+    auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay,runPayload.getBattery().getBatteryState(),runPayload.getHouse().getTotalDirt()),runPayload.getMaxSteps(),config->getAlgorithmName());
     Logger::getInstance().log("Running VacuumSimulator");
     while(!shouldTerminate(record,runPayload.getMaxSteps())) {
         Logger::getInstance().log("Algorithm step:");
