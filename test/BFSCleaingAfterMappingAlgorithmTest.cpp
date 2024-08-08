@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
 #include <filesystem>
 #include <VacuumSimulator.hpp>
-#include <MappingAlgorithm/MappingAlgorithm.hpp>
+#include <MappingAlgorithm/BFSCleaingAfterMappingAlgorithm.hpp>
 #include "Logger.hpp"
 #include <OutFileWriter.hpp>
-class MappingAlgorithmTest : public ::testing::Test {
+class BFSCleaingAfterMappingAlgorithmTest : public ::testing::Test {
     protected:
         void StartTest(std::filesystem::path inputfile, std::string filename)
         {
             Logger::getInstance().setLogFile("/tmp/myrobot/test.log");
             this->filename = filename;
             VacuumSimulator simulator;
-            auto config = std::make_shared<MappingAlgorithmConfig>();
+            this->config = std::make_shared<BFSCleaingAfterMappingAlgorithmConfig>();
             simulator.setAlgorithm(config);
             simulator.readHouseFile(inputfile);
             record = simulator.calculate();
@@ -25,18 +25,19 @@ class MappingAlgorithmTest : public ::testing::Test {
 
         }
         void TearDown() override {
-            if (!testing::Test::HasFailure())
+            if (record->size() != 0)
             {
                 OutFileWriter writer;
-                writer.write("../test/examples/gt/" + filename,record);
+                writer.write("../test/examples/gt/" + filename, record, config->getAlgorithmName());
             }
         }
         std::string filename;
         std::shared_ptr<CleaningRecord> record;
+        std::shared_ptr<AlgorithmConfig> config;
 };
-class FutileTest : public MappingAlgorithmTest {};
-class MappingTest : public MappingAlgorithmTest {};
-class CleaningTest : public MappingAlgorithmTest {};
+class FutileTest : public BFSCleaingAfterMappingAlgorithmTest {};
+class MappingTest : public BFSCleaingAfterMappingAlgorithmTest {};
+class CleaningTest : public BFSCleaingAfterMappingAlgorithmTest {};
 
 TEST_F(FutileTest, minHouse) {
     StartTest("../test/examples/futileTest/house-minvalid.txt", "house-minvalid.txt");

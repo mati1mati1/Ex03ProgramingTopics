@@ -20,7 +20,7 @@ void VacuumSimulator::run(){
     }
     Logger::getInstance().log("Writing output file");
     OutFileWriter writer;
-    writer.write(fileInputpath,record);
+    writer.write(fileInputpath, record, config->getAlgorithmName());
     Logger::getInstance().log("Output file written");
 
 }
@@ -36,12 +36,16 @@ std::shared_ptr<CleaningRecord> VacuumSimulator::calculate(){
     algorithm->setWallsSensor(runPayload.getHouse());
     algorithm->setDirtSensor(runPayload.getHouse());
     algorithm->setMaxSteps(runPayload.getMaxSteps());
-    auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay,runPayload.getBattery().getBatteryState(),runPayload.getHouse().getTotalDirt()));
+    auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay,runPayload.getBattery().getBatteryState(),runPayload.getHouse().getTotalDirt()),runPayload.getMaxSteps());
     Logger::getInstance().log("Running VacuumSimulator");
     while(!shouldTerminate(record,runPayload.getMaxSteps())) {
         Logger::getInstance().log("Algorithm step:");
         Logger::getInstance().log(std::to_string(record->size()));
         auto step = algorithm->nextStep();
+        if (record->size() == 1510){
+            Logger::getInstance().log("Initial house state:");
+            Logger::getInstance().log(runPayload.getHouse());
+        }
         if (step == Step::Finish)
         {
             Logger::getInstance().log("Algorithm finished");
