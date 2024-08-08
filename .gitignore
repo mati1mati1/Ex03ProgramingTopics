@@ -40,3 +40,5 @@ output
 *.exe
 *.out
 *.app
+test/.DS_Store
+.DS_Store

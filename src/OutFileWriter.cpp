@@ -62,23 +62,22 @@ void OutFileWriter::createDirectoryIfNotExists(const std::filesystem::path &file
 std::string OutFileWriter::getStatusString(const std::shared_ptr<CleaningRecordStep>& step) {
     if (step->getStep() == Step::Finish) {
         return "FINISHED";
-    } else if (step->getLocationType() != LocationType::CHARGING_STATION && step->getBatteryLevel() == 0) {
-        return "DEAD";
-    } else {
-        return "WORKING";
     }
+    if (step->getLocationType() != LocationType::CHARGING_STATION && step->getBatteryLevel() == 0) {
+        return "DEAD";
+    }
+    return "WORKING";
 }
 
 uint32_t OutFileWriter::getScore(const std::string status, const std::shared_ptr<CleaningRecord> record, bool inDock) {
         if (status == "DEAD"){
-            return record->getMaxSteps() + record->last()->getDirtLevel() * 300 + 2000;
+            return record->getMaxSteps() + baseScore(record) + 2000;
         }
-        else if (status == "FINISHED" && !inDock)
+
+        if (status == "FINISHED" && !inDock)
         {
-            return record->getMaxSteps() + record->last()->getDirtLevel() * 300 + 3000;
+            return record->getMaxSteps() + baseScore(record) + 3000;
         }
-        else
-        {
-            return record->size() + record->last()->getDirtLevel() * 300 + (inDock ? 0 : 1000);
-        }
+
+        return record->size() + baseScore(record) + (inDock ? 0 : 1000);
 }
