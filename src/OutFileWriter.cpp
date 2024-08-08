@@ -4,13 +4,13 @@
 #include <fstream>
 #include <filesystem>
 
-std::filesystem::path OutFileWriter::write(const std::filesystem::path& inputFileName, const std::shared_ptr<CleaningRecord> record) {
+std::filesystem::path OutFileWriter::write(const std::filesystem::path& inputFileName, const std::shared_ptr<CleaningRecord> record, const std::string& algorithmName) {
     if (!record) {
         std::cerr << "No results to save." << std::endl;
         Logger::getInstance().log("Error: No results to save.");
         return std::filesystem::path();
     }
-    const std::filesystem::path fileOutputpath = getFileName(inputFileName, record->getAlgorithmName());
+    const std::filesystem::path fileOutputpath = getFileName(inputFileName, algorithmName);
     Logger::getInstance().log("Saving results to: " + fileOutputpath.string());
     createDirectoryIfNotExists(inputFileName.parent_path());
     std::ofstream outFile(fileOutputpath);

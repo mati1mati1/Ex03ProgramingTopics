@@ -3,7 +3,7 @@
 
 TEST(CleaningRecordTest, Construction) {
     CleaningRecordStep step = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 1, 2);
-    CleaningRecord record(step, 10, "test");
+    CleaningRecord record(step, 10);
     ASSERT_EQ(record.size(), 0);
     ASSERT_NO_THROW(record.last());
     ASSERT_NO_THROW(record[0]);
@@ -11,7 +11,7 @@ TEST(CleaningRecordTest, Construction) {
 
 TEST(CleaningRecordTest, Add) {
     CleaningRecordStep step = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 1, 2);
-    CleaningRecord record(step, 10, "test");
+    CleaningRecord record(step, 10);
     ASSERT_EQ(record.size(), 0);
     CleaningRecordStep step2 = CleaningRecordStep(LocationType::CHARGING_STATION, Step::South, 10, 20);
     record.add(step2);
@@ -27,7 +27,7 @@ TEST(CleaningRecordTest, Add) {
 
 TEST(CleaningRecordTest, InitialValue) {
     CleaningRecordStep step = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 1, 2);
-    CleaningRecord record(step, 10, "test");
+    CleaningRecord record(step, 10);
     ASSERT_EQ(record.size(), 0);
     ASSERT_EQ(*record.getInitialStep(), step);
     ASSERT_EQ(record.size(), 0);

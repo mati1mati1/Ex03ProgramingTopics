@@ -1,8 +1,8 @@
 #include "CleaningRecord.hpp"
 #include "Logger.hpp"
 
-CleaningRecord::CleaningRecord(const CleaningRecordStep& initialStep, uint32_t maxSteps, const std::string& algorithmName)
-    : hasInitialStep(true), MaxSteps(maxSteps), algorithmName(algorithmName) {
+CleaningRecord::CleaningRecord(const CleaningRecordStep& initialStep, uint32_t maxSteps)
+    : hasInitialStep(true), maxSteps(maxSteps) {
     Logger::getInstance().log("Initializing CleaningRecord");
     steps = std::vector<std::shared_ptr<CleaningRecordStep>>();
     steps.emplace_back(std::make_shared<CleaningRecordStep>(initialStep));

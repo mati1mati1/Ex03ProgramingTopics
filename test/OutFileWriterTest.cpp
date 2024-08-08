@@ -14,7 +14,7 @@ protected:
         Logger::getInstance().setLogFile(logFilePath);
 
         CleaningRecordStep initialStep = CleaningRecordStep(LocationType::CHARGING_STATION, Step::North, 5, 10);
-        record = std::make_shared<CleaningRecord>(initialStep,10, "test");
+        record = std::make_shared<CleaningRecord>(initialStep,10);
     }
 
     void TearDown() override {
@@ -34,7 +34,7 @@ TEST_F(OutFileWriterTest, WORKING) {
     std::filesystem::path inputFilePath = testOutputDir / "input_house.txt";
     std::filesystem::create_directories(testOutputDir);
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, "OutFileWriterTest-working");
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
     uint32_t score = 4 + 9 * 300 + 1000;
@@ -77,7 +77,7 @@ TEST_F(OutFileWriterTest, DEAD) {
     std::filesystem::path inputFilePath = testOutputDir / "input_house.txt";
     std::filesystem::create_directories(testOutputDir);
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, "OutFileWriterTest-dead");
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
     uint32_t score = 10 + 9 * 300 + 2000;
@@ -113,7 +113,7 @@ TEST_F(OutFileWriterTest, WithoutStep) {
     std::filesystem::path inputFilePath = testOutputDir / "input_house.txt";
     std::filesystem::create_directories(testOutputDir);
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, "OutFileWriterTest-withoutstep");
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
     uint32_t score = 0 + 10 * 300 + 0;
@@ -163,7 +163,7 @@ TEST_F(OutFileWriterTest, FINISHED) {
     std::filesystem::path inputFilePath = testOutputDir / "input_house.txt";
     std::filesystem::create_directories(testOutputDir);
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, "OutFileWriterTest-finished");
 
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));
     uint32_t score = 12 + 0 * 300 + 0;
@@ -198,7 +198,7 @@ TEST_F(OutFileWriterTest, HandleNoRecord) {
     OutFileWriter writer;
     std::filesystem::path inputFilePath = testOutputDir / "input_house.txt";
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, nullptr);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, nullptr, "HandleNoRecord");
 
     ASSERT_TRUE(outputFilePath.empty());
 }
@@ -210,7 +210,7 @@ TEST_F(OutFileWriterTest, CreateDirectoryIfNotExists) {
 
     ASSERT_FALSE(std::filesystem::exists(newDir));
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, nullptr);
 
     ASSERT_TRUE(std::filesystem::exists(newDir));
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));

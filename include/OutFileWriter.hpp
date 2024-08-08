@@ -5,7 +5,7 @@
 class OutFileWriter {
 public:
     OutFileWriter() { };
-    std::filesystem::path write(const std::filesystem::path& inputFileName, const std::shared_ptr<CleaningRecord> record);
+    std::filesystem::path write(const std::filesystem::path& inputFileName, const std::shared_ptr<CleaningRecord> record, const std::string& algorithmName);
 private:
     const std::filesystem::path getFileName(const std::filesystem::path &fileOutputPath, const std::string &algorithmName);
     void writeOutfile(std::ofstream &outFile, const std::filesystem::path &fileOutputpath, const std::shared_ptr<CleaningRecord> record);

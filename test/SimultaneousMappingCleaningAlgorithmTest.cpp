@@ -11,7 +11,7 @@ class SimultaneousMappingCleaningAlgorithmTest : public ::testing::Test {
             Logger::getInstance().setLogFile("/tmp/myrobot/test.log");
             this->filename = filename;
             VacuumSimulator simulator;
-            auto config = std::make_shared<SimultaneousMappingCleaningAlgorithmConfig>();
+            this->config = std::make_shared<SimultaneousMappingCleaningAlgorithmConfig>();
             simulator.setAlgorithm(config);
             simulator.readHouseFile(inputfile);
             record = simulator.calculate();
@@ -28,11 +28,12 @@ class SimultaneousMappingCleaningAlgorithmTest : public ::testing::Test {
             if (record->size() != 0)
             {
                 OutFileWriter writer;
-                writer.write("../test/examples/gt/" + filename,record);
+                writer.write("../test/examples/gt/" + filename, record, config->getAlgorithmName());
             }
         }
         std::string filename;
         std::shared_ptr<CleaningRecord> record;
+        std::shared_ptr<AlgorithmConfig> config;
 };
 class FutileTest : public SimultaneousMappingCleaningAlgorithmTest {};
 class MappingTest : public SimultaneousMappingCleaningAlgorithmTest {};

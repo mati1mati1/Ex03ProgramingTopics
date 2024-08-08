@@ -11,7 +11,7 @@ class MappingAlgorithmTest : public ::testing::Test {
             Logger::getInstance().setLogFile("/tmp/myrobot/test.log");
             this->filename = filename;
             VacuumSimulator simulator;
-            auto config = std::make_shared<MappingAlgorithmConfig>();
+            this->config = std::make_shared<MappingAlgorithmConfig>();
             simulator.setAlgorithm(config);
             simulator.readHouseFile(inputfile);
             record = simulator.calculate();
@@ -28,11 +28,12 @@ class MappingAlgorithmTest : public ::testing::Test {
             if (record->size() != 0)
             {
                 OutFileWriter writer;
-                writer.write("../test/examples/gt/" + filename,record);
+                writer.write("../test/examples/gt/" + filename, record, config->getAlgorithmName());
             }
         }
         std::string filename;
         std::shared_ptr<CleaningRecord> record;
+        std::shared_ptr<AlgorithmConfig> config;
 };
 class FutileTest : public MappingAlgorithmTest {};
 class MappingTest : public MappingAlgorithmTest {};

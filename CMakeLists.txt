@@ -140,22 +140,3 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/main.cpp
 )
 
-# add_library(MappingAlgorithmA SHARED
-#   src/MappingAlgorithm/MappingAlgorithm.cpp
-#   src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
-#   src/MappingAlgorithm/MappingGraph.cpp
-#   src/HouseLocation.cpp
-#   src/Coordinate.cpp  
-# )
-
-# add_library(SimultaneousMappingCleaningAlgorithmB SHARED
-#   src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
-#   src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
-#   src/MappingAlgorithm/MappingGraph.cpp
-#   src/HouseLocation.cpp
-#   src/Coordinate.cpp  
-# )
-
-
-# target_include_directories(MappingAlgorithmA PRIVATE include)
-# target_include_directories(SimultaneousMappingCleaningAlgorithmB PRIVATE include)
