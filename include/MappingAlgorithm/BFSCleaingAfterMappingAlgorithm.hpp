@@ -7,7 +7,7 @@ public:
     virtual ~BFSCleaingAfterMappingAlgorithm() {}
 
 protected:
-    virtual std::optional<Step> getStepTowardsClosestReachableTileToClean() const override;
+    std::optional<Step> findStepToNearestDirtyTile() const ;
     virtual Step calculateNextStep() override;
 
 private:

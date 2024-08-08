@@ -1,32 +1,35 @@
 #include "BFSSimultaneousMappingAndCleaningAlgorithm.hpp"
 
-std::optional<Step> BFSSimultaneousMappingAndCleaningAlgorithm::getStepTowardsClosestReachableTileToClean() const {
+std::optional<Step> BFSSimultaneousMappingAndCleaningAlgorithm::findStepToNearestDirtyOrUnknownTile() const {
     if (!isExistsMappedCleanableTile()) {
         return std::nullopt;
     }
-    const auto& relativeCoordinates = GetRelativeCoordinates();
     const auto& graph = getNoWallGraph();
-    auto [results, iterator] = graph.bfs_find_first(relativeCoordinates, [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
+    auto condition =  [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
         auto locationMapping = graph.getVertex(coordinate);
         bool canReachAndReturn = stepsUntilMustBeOnCharger(searchResult.getDistance()) + 1 > getLengthToCharger(coordinate);
         bool isDirtyTile = locationMapping.getHouseLocation().getLocationType() == LocationType::HOUSE_TILE &&
                            locationMapping.getHouseLocation().getDirtLevel() > 0;
         bool isUnmappedTile = locationMapping.getHouseLocation().getLocationType() == LocationType::UNKNOWN;                   
         return canReachAndReturn && (isDirtyTile || isUnmappedTile);
-    });
-    if (iterator == results->end()) {
-        return std::nullopt;
+        };
+
+    auto step = findStepToNearestMatchingTile(condition);
+
+    if (step.has_value())
+    {
+        return step;
     }
-    Step step = getStepTowardsDestination(iterator->first, results);
-    return step;
+    return std::nullopt;
 }
+
 
 Step BFSSimultaneousMappingAndCleaningAlgorithm::calculateNextStep() {
     if (auto forcedMove = getForcedMove()) {
         return *forcedMove;
     }
 
-    if (auto step = getStepTowardsClosestReachableTileToClean()) {
+    if (auto step = findStepToNearestDirtyOrUnknownTile()) {
         return *step;
     }
 

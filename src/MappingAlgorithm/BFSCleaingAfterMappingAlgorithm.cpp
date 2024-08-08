@@ -1,26 +1,27 @@
 #include "BFSCleaingAfterMappingAlgorithm.hpp"
 
-std::optional<Step> BFSCleaingAfterMappingAlgorithm::getStepTowardsClosestReachableTileToClean() const {
+std::optional<Step> BFSCleaingAfterMappingAlgorithm::findStepToNearestDirtyTile() const {
     if (!isExistsMappedCleanableTile()) {
         return std::nullopt;
     }
 
-    const auto& relativeCoordinates = GetRelativeCoordinates();
     const auto& graph = getNoWallGraph();
 
-    auto [results, iterator] = graph.bfs_find_first(relativeCoordinates, [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
+    auto condition = [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
         auto locationMapping = graph.getVertex(coordinate);
         bool canReachAndReturn = stepsUntilMustBeOnCharger(searchResult.getDistance()) > getLengthToCharger(coordinate);
         bool isDirtyTile = locationMapping.getHouseLocation().getLocationType() == LocationType::HOUSE_TILE &&
                            locationMapping.getHouseLocation().getDirtLevel() > 0;
         return canReachAndReturn && isDirtyTile;
-    });
+    };
 
-    if (iterator == results->end()) {
-        return std::nullopt;
+    auto step = findStepToNearestMatchingTile(condition);
+    if (step.has_value())
+    {
+        return step;
     }
-    Step step = getStepTowardsDestination(iterator->first, results);
-    return step;
+    return std::nullopt;
+
 }
 
 
@@ -54,7 +55,7 @@ Step BFSCleaingAfterMappingAlgorithm::calculateNextStep() {
     }
     else
     {
-        step = getStepTowardsClosestReachableTileToClean();
+        step = findStepToNearestDirtyTile();
         if (!step.has_value())
         {
             step = getStepTowardsClosestReachableUnknown();

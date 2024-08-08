@@ -15,8 +15,6 @@ public:
 
 protected:
     virtual Step calculateNextStep() {return Step::Finish;};
-    
-    virtual std::optional<Step> getStepTowardsClosestReachableTileToClean() const {return std::nullopt;};
     virtual std::optional<Step> getForcedMove() const;
 
     std::optional<Step> getStepTowardsClosestReachableUnknown() const;
@@ -25,7 +23,6 @@ protected:
     Step getStepTowardsDestination(const Coordinate<int32_t>& destination, const std::shared_ptr<std::unordered_map<Coordinate<int32_t>,BFSResult>> results) const;
         
     const MappingGraph& getNoWallGraph() const { return noWallGraph; }
-    const Coordinate<int32_t>& GetRelativeCoordinates() const { return relativeCoordinates; }    
     
     uint32_t stepsUntilMustBeOnCharger(uint32_t offset = 0) const;
     uint32_t getLengthToCharger(Coordinate<int32_t> from) const;
@@ -38,11 +35,12 @@ protected:
     bool isExistsMappedCleanableTile() const;
     bool isOnCharger() const;
 
+    std::optional<Step> findStepToNearestMatchingTile(const std::function<bool(const Coordinate<int32_t>&, const BFSResult&)>& predicate) const;
 
 private:
     constexpr uint32_t maxReachableDistance() const { return maxBattery / 2 ;};
     constexpr uint32_t maxCleanableDistance() const { return (maxBattery-1) /2 ;};
-    
+    std::optional<Step> getStepTowardsClosestReachableTileToClean() const {return std::nullopt;};
     const Coordinate<int32_t> CHRAGER_LOCATION = Coordinate<int32_t>(0,0);
     const Coordinate<int32_t>& getChargerLocation() const { return CHRAGER_LOCATION;};
     

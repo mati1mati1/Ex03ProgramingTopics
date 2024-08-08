@@ -7,7 +7,7 @@ public:
     virtual ~BFSSimultaneousMappingAndCleaningAlgorithm() {}
 
 protected:
-    virtual std::optional<Step> getStepTowardsClosestReachableTileToClean() const override;
+    std::optional<Step> findStepToNearestDirtyOrUnknownTile() const ;
     virtual Step calculateNextStep() override;
 };
 class BFSSimultaneousMappingAndCleaningAlgorithmConfig : public AlgorithmConfig {

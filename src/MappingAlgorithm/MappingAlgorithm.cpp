@@ -117,17 +117,14 @@ bool MappingAlgorithm::mustReturnToCharger() const
 
 Step MappingAlgorithm::stepTowardsCharger() const
 {
-    auto [results,iterator]= noWallGraph.bfs_find_first(relativeCoordinates, std::function<bool (const Coordinate<int32_t> &, const BFSResult &)> (
-        [&](const Coordinate<int32_t> &coordinate, const BFSResult &){
-            return coordinate == getChargerLocation();
-        }
-    ));
-    if(iterator == results->end())
+    auto condition = [&](const Coordinate<int32_t> &coordinate, const BFSResult &)
+                        {return coordinate == getChargerLocation();};
+    auto step = findStepToNearestMatchingTile(condition);
+    if(step.has_value())
     {
-        throw std::runtime_error("Could not find path to charger in BFS results");
+        return step.value();
     }
-    Step step = getStepTowardsDestination(getChargerLocation(),results);
-    return step;
+    throw std::runtime_error("Could not find path to charger in BFS results");
 }
 uint32_t MappingAlgorithm::getLengthToCharger(Coordinate<int32_t> from) const
 {
@@ -189,18 +186,17 @@ bool MappingAlgorithm::isPotentiallyCleanableTile(const HouseLocationMapping &lo
 }
 std::optional<Step> MappingAlgorithm::getStepTowardsClosestReachableUnknown() const
 {
-    auto [results,iterator] = noWallGraph.bfs_find_first(relativeCoordinates, std::function<bool (const Coordinate<int32_t> &, const BFSResult &)> (
-        [&](const Coordinate<int32_t> &coordinate, const BFSResult &bfsResult){
-            auto locationMapping = noWallGraph.getVertex(coordinate);
-            return stepsUntilMustBeOnCharger(bfsResult.getDistance()) >= getLengthToCharger(coordinate) && locationMapping.getHouseLocation().getLocationType() == LocationType::UNKNOWN;
-        }
-    ));
-    if(iterator == results->end())
+    auto condition = [&](const Coordinate<int32_t> &coordinate, const BFSResult &bfsResult){
+                    auto locationMapping = noWallGraph.getVertex(coordinate);
+                    return stepsUntilMustBeOnCharger(bfsResult.getDistance()) >= getLengthToCharger(coordinate)
+                     && locationMapping.getHouseLocation().getLocationType() == LocationType::UNKNOWN;};
+    auto step = findStepToNearestMatchingTile(condition);
+    if (step.has_value())
     {
-        return std::nullopt;
+        return step;
     }
-    Step step = getStepTowardsDestination(iterator->first,results);
-    return step;
+    return std::nullopt;
+
 }
 Step MappingAlgorithm::getStepTowardsDestination(const Coordinate<int32_t>& destination, const std::shared_ptr<std::unordered_map<Coordinate<int32_t>,BFSResult>> results) const
 {
@@ -280,6 +276,19 @@ void MappingAlgorithm::updateLocationIfExists(const HouseLocation& newLocation)
     noWallVertex.update(newLocation);
     
 }
+
+std::optional<Step> MappingAlgorithm::findStepToNearestMatchingTile(const std::function<bool(const Coordinate<int32_t>&, const BFSResult&)>& predicate) const {
+
+    auto [results, iterator] = noWallGraph.bfs_find_first(relativeCoordinates, predicate);
+
+    if (iterator == results->end()) {
+        return std::nullopt;
+    }
+
+    Step step = getStepTowardsDestination(iterator->first, results);
+    return step;
+}
+
 void MappingAlgorithm::mapSurroundings()
 {
     mapCurrentLocation();
