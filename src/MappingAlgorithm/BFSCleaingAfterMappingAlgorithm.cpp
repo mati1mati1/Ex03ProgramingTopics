@@ -4,21 +4,25 @@ std::optional<Step> BFSCleaingAfterMappingAlgorithm::getStepTowardsClosestReacha
     if (!isExistsMappedCleanableTile()) {
         return std::nullopt;
     }
-    auto [results, iterator] = noWallGraph.bfs_find_first(relativeCoordinates, std::function<bool(const Coordinate<int32_t>&, const BFSResult&)>(
-        [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
-            auto locationMapping = noWallGraph.getVertex(coordinate);
-            bool canReachAndReturn = stepsUntilMustBeOnCharger(searchResult.getDistance()) > getLengthToCharger(coordinate);
-            bool isDirtyTile = locationMapping.getHouseLocation().getLocationType() == LocationType::HOUSE_TILE &&
-                               locationMapping.getHouseLocation().getDirtLevel() > 0;
-            return canReachAndReturn && isDirtyTile;
-        }
-    ));
+
+    const auto& relativeCoordinates = GetRelativeCoordinates();
+    const auto& graph = getNoWallGraph();
+
+    auto [results, iterator] = graph.bfs_find_first(relativeCoordinates, [&](const Coordinate<int32_t>& coordinate, const BFSResult& searchResult) {
+        auto locationMapping = graph.getVertex(coordinate);
+        bool canReachAndReturn = stepsUntilMustBeOnCharger(searchResult.getDistance()) > getLengthToCharger(coordinate);
+        bool isDirtyTile = locationMapping.getHouseLocation().getLocationType() == LocationType::HOUSE_TILE &&
+                           locationMapping.getHouseLocation().getDirtLevel() > 0;
+        return canReachAndReturn && isDirtyTile;
+    });
+
     if (iterator == results->end()) {
         return std::nullopt;
     }
     Step step = getStepTowardsDestination(iterator->first, results);
     return step;
 }
+
 
 Step BFSCleaingAfterMappingAlgorithm::calculateNextStep() {
     /*
@@ -70,12 +74,12 @@ Step BFSCleaingAfterMappingAlgorithm::calculateNextStep() {
      */
     if (isOnCharger())
     {
-        finished = true;
+        setFinished();
         return Step::Finish;
     }
     return stepTowardsCharger();
     
 }
 bool BFSCleaingAfterMappingAlgorithm::isMappingStage() const {
-    return  std::min(static_cast<uint32_t>(sqrt(maxSteps)),maxBattery) > stepsTaken && !isCompletelyMapped();
+    return  std::min(static_cast<uint32_t>(sqrt(getMaxSteps())),getMaxBattery()) > getStepsTaken() && !isCompletelyMapped();
 }
