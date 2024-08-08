@@ -1,19 +1,19 @@
 #pragma once
-#include "AbstractMappingAlgorithm.hpp"
+#include "MappingAlgorithm.hpp"
 #include "AlgorithmConfig.hpp"
 
-class SimultaneousMappingCleaningAlgorithm : public AbstractMappingAlgorithm {
+class BFSSimultaneousMappingAndCleaningAlgorithm : public MappingAlgorithm {
 public:
-    virtual ~SimultaneousMappingCleaningAlgorithm() {}
+    virtual ~BFSSimultaneousMappingAndCleaningAlgorithm() {}
 
 protected:
     virtual std::optional<Step> getStepTowardsClosestReachableTileToClean() const override;
     virtual Step calculateNextStep() override;
 };
-class SimultaneousMappingCleaningAlgorithmConfig : public AlgorithmConfig {
+class BFSSimultaneousMappingAndCleaningAlgorithmConfig : public AlgorithmConfig {
 public:
-    SimultaneousMappingCleaningAlgorithmConfig() { };
+    BFSSimultaneousMappingAndCleaningAlgorithmConfig() { };
     AlgorithmType getType() const override { return AlgorithmType::Simultaneous; };
     std::string getAlgorithmName() const override { return "SimultaneousMappingCleaningAlgorithm"; };
-    ~SimultaneousMappingCleaningAlgorithmConfig() override = default;
+    ~BFSSimultaneousMappingAndCleaningAlgorithmConfig() override = default;
 };

@@ -210,7 +210,7 @@ TEST_F(OutFileWriterTest, CreateDirectoryIfNotExists) {
 
     ASSERT_FALSE(std::filesystem::exists(newDir));
 
-    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, nullptr);
+    std::filesystem::path outputFilePath = writer.write(inputFilePath, record, "CreateDirectoryIfNotExists");
 
     ASSERT_TRUE(std::filesystem::exists(newDir));
     ASSERT_TRUE(std::filesystem::exists(outputFilePath));

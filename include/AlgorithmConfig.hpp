@@ -1,6 +1,6 @@
 #pragma once
 enum class AlgorithmType {
-    Mapping,
+    BFSCleaingAfterMappingAlgorithm,
     Simultaneous
 };
 class AlgorithmConfig{

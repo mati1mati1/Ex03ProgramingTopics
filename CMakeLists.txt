@@ -88,13 +88,13 @@ add_gtest_executable(
   ${PROJECT_SOURCE_DIR}/src/CleaningRecord.cpp
   ${PROJECT_SOURCE_DIR}/src/OutFileWriter.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingAlgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSSimultaneousMappingAndCleaningAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingGraph.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/test/MappingAlgorithmTest.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSCleaingAfterMappingAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/test/BFSCleaingAfterMappingAlgorithmTest.cpp
 )
 add_gtest_executable(
-  SimultaneousMappingCleaningAlgorithmTest
+  BFSSimultaneousMappingAndCleaningAlgorithmTest
   ${PROJECT_SOURCE_DIR}/src/VacuumParser.cpp
   ${PROJECT_SOURCE_DIR}/src/HouseLocation.cpp
   ${PROJECT_SOURCE_DIR}/src/VacuumHouse.cpp
@@ -104,11 +104,11 @@ add_gtest_executable(
   ${PROJECT_SOURCE_DIR}/src/CleaningRecordStep.cpp
   ${PROJECT_SOURCE_DIR}/src/CleaningRecord.cpp
   ${PROJECT_SOURCE_DIR}/src/OutFileWriter.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSSimultaneousMappingAndCleaningAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingGraph.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingAlgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/test/SimultaneousMappingCleaningAlgorithmTest.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSCleaingAfterMappingAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/test/BFSSimultaneousMappingAndCleaningAlgorithmTest.cpp
 )
 add_gtest_executable(
   OutFileWriterTest
@@ -135,8 +135,8 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/MeteredVacuumBattery.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/MappingGraph.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/SimultaneousMappingCleaningAlgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/AbstractMappingAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSSimultaneousMappingAndCleaningAlgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/MappingAlgorithm/BFSCleaingAfterMappingAlgorithm.cpp
   ${PROJECT_SOURCE_DIR}/main.cpp
 )
 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Logger.hpp"
-#include "MappingAlgorithm.hpp"
+#include "MappingAlgorithm/BFSSimultaneousMappingAndCleaningAlgorithm.hpp"
 #include "VacuumSimulator.hpp"
 bool getRand(int argc, char **argv);
 
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         return 1;
     }
     std::string inputFilePath = argv[1];
-    auto config = std::make_shared<MappingAlgorithmConfig>();
+    auto config = std::make_shared<BFSSimultaneousMappingAndCleaningAlgorithmConfig>();
     VacuumSimulator simulator;
     try {
         simulator.setAlgorithm(config);

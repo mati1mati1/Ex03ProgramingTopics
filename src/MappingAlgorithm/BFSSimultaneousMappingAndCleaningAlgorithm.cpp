@@ -1,6 +1,6 @@
-#include "SimultaneousMappingCleaningAlgorithm.hpp"
+#include "BFSSimultaneousMappingAndCleaningAlgorithm.hpp"
 
-std::optional<Step> SimultaneousMappingCleaningAlgorithm::getStepTowardsClosestReachableTileToClean() const {
+std::optional<Step> BFSSimultaneousMappingAndCleaningAlgorithm::getStepTowardsClosestReachableTileToClean() const {
     if (!isExistsMappedCleanableTile()) {
         return std::nullopt;
     }
@@ -21,7 +21,7 @@ std::optional<Step> SimultaneousMappingCleaningAlgorithm::getStepTowardsClosestR
     return step;
 }
 
-Step SimultaneousMappingCleaningAlgorithm::calculateNextStep() {
+Step BFSSimultaneousMappingAndCleaningAlgorithm::calculateNextStep() {
     std::optional<Step> forcedMove = getForcedMove();
     if (forcedMove.has_value()) {
         return *forcedMove;
