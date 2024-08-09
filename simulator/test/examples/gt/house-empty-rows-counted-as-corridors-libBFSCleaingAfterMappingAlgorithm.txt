@@ -1,0 +1,7 @@
+NumSteps = 9
+DirtLeft = 0
+Status = FINISHED
+InDock = TRUE
+Score = 9
+Steps: 
+ENWEEWSsWF

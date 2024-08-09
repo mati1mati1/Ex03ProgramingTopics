@@ -1,5 +1,0 @@
-- We have supplied a HLD doucument at /HLD just like the previous exercise.
-- We believe our implementaion of Graph mainly Bfs_find_first(Stops at first match to predicate), bfs(Cached per point run and invalidated only when needed) 
-are really cool and improved performace alot(an order of magnitude over the uncached version) and would like to have it considered for a bonus.
-- Extensive Unit Testing ETE testing and memory leak testing(Already claimed)
-- Logging (Already claimed)
