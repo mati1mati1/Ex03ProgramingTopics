@@ -5,7 +5,18 @@ CleaningRecord::CleaningRecord(const CleaningRecordStep& initialStep, uint32_t m
     steps = std::vector<std::shared_ptr<CleaningRecordStep>>();
     steps.emplace_back(std::make_shared<CleaningRecordStep>(initialStep));
 }
-
+Status CleaningRecord::getStatus() const
+{
+    if (isDead())
+    {
+        return Status::DEAD;
+    }
+    if (isFinished())
+    {
+        return Status::FINISHED;
+    }
+    return Status::WORKING;
+}
 const std::shared_ptr<CleaningRecordStep> CleaningRecord::operator[](std::size_t idx) {
     return steps.at(idx);
 }
@@ -42,6 +53,7 @@ uint32_t CleaningRecord::size() const {
     if (hasInitialStep) {
         return 0;
     }
+    
     if (last()->getStep() == Step::Finish) {
         return steps.size() - 1;
     }

@@ -9,6 +9,7 @@ class CleaningRecordStep{
         const LocationType& getLocationType() const { return locationType; }
         const Step& getStep() const { return step; }
         uint32_t getBatteryLevel() const { return batteryLevel; }
+        bool isAtDockingStation() const { return getLocationType() == LocationType::CHARGING_STATION; } 
         uint32_t getDirtLevel() const { return dirtLevel; }
         bool operator==(const CleaningRecordStep& other) const
         {
