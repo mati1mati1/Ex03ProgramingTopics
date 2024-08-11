@@ -16,7 +16,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/Simulator",
             "args": [
-                "-house_path=/home/arels/Ex03ProgramingTopics/simulator/test/examples/cleaningTest",
+                "-house_path=/home/arels/Ex03ProgramingTopics/simulator/test/examples/failtests",
                 "-algo_path=/home/arels/Ex03ProgramingTopics/simulator/oldSo"
             ],
             "stopAtEntry": false,

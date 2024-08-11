@@ -33,7 +33,7 @@ protected:
     {
         if (!testing::Test::HasFailure())
         {
-            auto path = simulator.exportRecord();
+            auto path = simulator.exportRecord(false);
             auto gtPath = gt / (filename + "-" + algoName + ".txt");
             std::filesystem::copy(path, gtPath, std::filesystem::copy_options::overwrite_existing);
         }

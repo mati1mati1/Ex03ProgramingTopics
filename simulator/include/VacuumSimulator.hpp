@@ -15,8 +15,8 @@ public:
     void setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm);
     void readHouseFile(const std::filesystem::path &fileInputpath);
     auto getMaxTime() const { return payload->getMaxTime(); }
-    std::filesystem::path exportRecord();
-    std::filesystem::path exportSummary();
+    std::filesystem::path exportRecord(bool timedOut);
+    std::filesystem::path exportSummary(bool timedOut);
     friend class SpecificAlgorithmTest;
 private:
     std::optional<CleaningRecordStep> applyStep(VacuumPayload &payload, Step step);
@@ -24,8 +24,8 @@ private:
     bool canRun() { return payload != nullptr && algorithm != nullptr; }
     void cleanCurrentLocation();
     void canExport();
-    void writeSummary(std::string houseName,std::filesystem::path outputPath);
-    void writeOutFile(std::ofstream &writeStream);
+    void writeSummary(std::string houseName,std::filesystem::path outputPath,bool timedOut);
+    void writeOutFile(std::ofstream &writeStream,bool timedOut);
 
 private:
     std::shared_ptr<CleaningRecord> record = nullptr;

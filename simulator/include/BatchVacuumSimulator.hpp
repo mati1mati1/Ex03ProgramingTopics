@@ -23,8 +23,9 @@ class Task
 class BatchVacuumSimulator
 {
     public:
-      void run(const SimulationArguments &args);
-      ~BatchVacuumSimulator();
+        void run(const SimulationArguments &args);
+        inline static const std::filesystem::path CWD = std::filesystem::current_path();
+        ~BatchVacuumSimulator();
     private:
         bool removeCompletedTasks(uint8_t &numThreads,std::vector<std::unique_ptr<Task>> &tasks);
         void waitAllTasks();
@@ -38,6 +39,5 @@ class BatchVacuumSimulator
         std::mutex summaryMutex;
         std::vector<void *> handles;
 
-        const std::filesystem::path CWD = std::filesystem::current_path();
 
 };

@@ -20,7 +20,6 @@ const std::filesystem::path getSummaryFilePath()
 }
 void VacuumSimulator::run(std::string algorithmName)
 {
-
     auto record = calculate();
     this->algorithmName = algorithmName;
     this->record = record;
@@ -43,7 +42,7 @@ void VacuumSimulator::canExport()
     throw std::runtime_error("No results.");
     
 }
-std::filesystem::path VacuumSimulator::exportRecord()
+std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
 {
     auto fileOutputpath = getOutFilePath(fileInputpath, algorithmName);
     std::ofstream writeStream(fileOutputpath);
@@ -53,16 +52,16 @@ std::filesystem::path VacuumSimulator::exportRecord()
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream);
+    writeOutFile(writeStream,timedOut);
     return fileOutputpath;
     
 }
-std::filesystem::path VacuumSimulator::exportSummary()
+std::filesystem::path VacuumSimulator::exportSummary(bool timedOut)
 {
     auto fileOutputpath = getSummaryFilePath();
     std::string houseName = fileInputpath.stem().string();
     canExport();
-    writeSummary(houseName,fileOutputpath);
+    writeSummary(houseName,fileOutputpath,timedOut);
     return fileOutputpath;
 }
 std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
@@ -151,7 +150,7 @@ void VacuumSimulator::readHouseFile(const std::filesystem::path &fileInputpath)
     this->record = nullptr;
 }
 
-void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path)
+void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path,bool timedOut)
 {
     std::ifstream inFile(path);
     std::ofstream outFile;
@@ -159,7 +158,7 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     std::vector<std::string> algorithmNames;
     std::vector<std::vector<std::string>> tableData;
     std::string line;
-    uint32_t score = VacuumScoreCalculator().calculateScore(record);
+    uint32_t score = VacuumScoreCalculator().calculateScore(record,timedOut);
 
     if (inFile.is_open())
     {
@@ -269,11 +268,11 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
 }
 
 
-void VacuumSimulator::writeOutFile(std::ofstream &writeStream)
+void VacuumSimulator::writeOutFile(std::ofstream &writeStream,bool timedOut)
 {
     auto recordLast = record->last();
     auto inDock = recordLast->isAtDockingStation(); 
-    auto score = VacuumScoreCalculator().calculateScore(record);
+    auto score = VacuumScoreCalculator().calculateScore(record,timedOut);
     writeStream << "NumSteps = " << record->size() << std::endl;
     writeStream << "DirtLeft = " << recordLast->getDirtLevel() << std::endl;
     writeStream << "Status = " << record->getStatus() << std::endl;
