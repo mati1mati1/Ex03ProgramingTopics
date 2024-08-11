@@ -2,3 +2,5 @@ build/**
 build/_deps
 *.txt
 summary.csv
+*.error
+*-*.txt

@@ -12,11 +12,11 @@ void VacuumSimulator::setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm)
 
 const std::filesystem::path getOutFilePath(const std::filesystem::path &fileOutputPath, const std::string &algorithmName)
 {
-    return fileOutputPath.parent_path() / (fileOutputPath.stem().string() + "-" + algorithmName + ".txt");
+    return std::filesystem::current_path() / (fileOutputPath.stem().string() + "-" + algorithmName + ".txt");
 }
-const std::filesystem::path getSummaryFilePath(const std::filesystem::path &fileOutputPath)
+const std::filesystem::path getSummaryFilePath()
 {
-    return fileOutputPath.parent_path() / "summary.csv";
+    return std::filesystem::current_path() / "summary.csv";
 }
 void VacuumSimulator::run(std::string algorithmName)
 {
@@ -59,7 +59,7 @@ std::filesystem::path VacuumSimulator::exportRecord()
 }
 std::filesystem::path VacuumSimulator::exportSummary()
 {
-    auto fileOutputpath = getSummaryFilePath(fileInputpath);
+    auto fileOutputpath = getSummaryFilePath();
     std::string houseName = fileInputpath.stem().string();
     canExport();
     writeSummary(houseName,fileOutputpath);

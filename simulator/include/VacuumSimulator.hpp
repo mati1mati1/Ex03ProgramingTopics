@@ -14,6 +14,7 @@ public:
     void exportRecord(const std::shared_ptr<CleaningRecord> record, const std::string &algorithmName);
     void setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm);
     void readHouseFile(const std::filesystem::path &fileInputpath);
+    auto getMaxTime() const { return payload->getMaxTime(); }
     std::filesystem::path exportRecord();
     std::filesystem::path exportSummary();
     friend class SpecificAlgorithmTest;
