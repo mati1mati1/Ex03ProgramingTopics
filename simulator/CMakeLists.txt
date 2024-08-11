@@ -139,6 +139,7 @@ add_executable(Simulator
   ${PROJECT_SOURCE_DIR}/VacuumSimulator.cpp
   ${PROJECT_SOURCE_DIR}/AlgorithmRegistrar.cpp
   ${PROJECT_SOURCE_DIR}/SimulationArguments.cpp
+  ${PROJECT_SOURCE_DIR}/BatchVacuumSimulator.cpp
 
 )
 target_link_libraries(Simulator PRIVATE Boost::filesystem
