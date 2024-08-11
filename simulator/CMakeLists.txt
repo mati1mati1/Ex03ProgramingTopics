@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(DCMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 include_directories(${PROJECT_SOURCE_DIR}/algorithm/)
 include_directories(${PROJECT_SOURCE_DIR}/include/)
 get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
@@ -92,7 +91,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ${PROJECT_SOURCE_DIR}/VacuumSimulator.cpp
     ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
     ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
-    ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
     ${PROJECT_SOURCE_DIR}/test/BFSCleaingAfterMappingAlgorithmTest.cpp
     ${PROJECT_SOURCE_DIR}/AlgorithmRegistrar.cpp
 
@@ -107,22 +105,22 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ${PROJECT_SOURCE_DIR}/VacuumSimulator.cpp
     ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
     ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
-    ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
     ${PROJECT_SOURCE_DIR}/test/BFSSimultaneousMappingAndCleaningAlgorithmTest.cpp
     ${PROJECT_SOURCE_DIR}/AlgorithmRegistrar.cpp
 
   )
-  add_gtest_executable(
-    OutFileWriterTest
-    ${PROJECT_SOURCE_DIR}/VacuumParser.cpp
-    ${PARENT_DIR}/common/src/HouseLocation.cpp
-    ${PARENT_DIR}/common/src/Coordinate.cpp
-    ${PROJECT_SOURCE_DIR}/VacuumHouse.cpp
-    ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
-    ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
-    ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
-    ${PROJECT_SOURCE_DIR}/test/OutFileWriterTest.cpp
-  )
+  
+  # add_gtest_executable(
+  #   OutFileWriterTest
+  #   ${PROJECT_SOURCE_DIR}/VacuumParser.cpp
+  #   ${PARENT_DIR}/common/src/HouseLocation.cpp
+  #   ${PARENT_DIR}/common/src/Coordinate.cpp
+  #   ${PROJECT_SOURCE_DIR}/VacuumHouse.cpp
+  #   ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
+  #   ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
+  #   ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
+  #   ${PROJECT_SOURCE_DIR}/test/OutFileWriterTest.cpp
+  # )
 
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Werror -pedantic -rdynamic")
@@ -136,11 +134,12 @@ add_executable(Simulator
   ${PARENT_DIR}/common/src/Coordinate.cpp
   ${PARENT_DIR}/common/src/HouseLocation.cpp
   ${PROJECT_SOURCE_DIR}/MeteredVacuumBattery.cpp
-  ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
   ${PROJECT_SOURCE_DIR}/VacuumHouse.cpp
   ${PROJECT_SOURCE_DIR}/VacuumParser.cpp
   ${PROJECT_SOURCE_DIR}/VacuumSimulator.cpp
   ${PROJECT_SOURCE_DIR}/AlgorithmRegistrar.cpp
+  ${PROJECT_SOURCE_DIR}/SimulationArguments.cpp
+  ${PROJECT_SOURCE_DIR}/BatchVacuumSimulator.cpp
 
 )
 target_link_libraries(Simulator PRIVATE Boost::filesystem

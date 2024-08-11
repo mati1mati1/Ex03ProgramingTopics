@@ -6,20 +6,23 @@
     "configurations": [
         {
             "name": "(gdb) Launch",
-            "type": "cppdbg",
+            "osx": {
+                "MIMode": "lldb"
+            },
+            "linux": {
+                "MIMode": "gdb"
+            },
+            "type":"cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Simulator",
             "args": [
-                "--house_path",
-                "${workspaceFolder}/test/examples/futileTest",
-                "--algo_path",
-                "/home/arels/Ex03ProgramingTopics/algorithm/algorithmB/build/"
+                "-house_path=/home/arels/Ex03ProgramingTopics/simulator/test/examples/failtests",
+                "-algo_path=/home/arels/Ex03ProgramingTopics/simulator/oldSo"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

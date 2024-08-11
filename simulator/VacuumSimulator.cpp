@@ -1,26 +1,68 @@
 #include "VacuumSimulator.hpp"
+#include "ScoreCalculator.hpp"
+#include "VacuumParser.hpp"
+#include <filesystem>
+#include <fstream>
+#include <algorithm>
 
-bool isAtDockingStation(std::shared_ptr<CleaningRecord> record) { return record->size() == 0 || record->last()->getLocationType() == LocationType::CHARGING_STATION; }
-bool isStuck(std::shared_ptr<CleaningRecord> record) { return record->size() != 0 && record->last()->getBatteryLevel() == 0 && !isAtDockingStation(record); }
-bool isAtMaxSteps(std::shared_ptr<CleaningRecord> record, uint32_t maxSteps) { return record->size() == maxSteps + 1; }
-bool shouldTerminate(std::shared_ptr<CleaningRecord> record, uint32_t maxSteps) { return isAtMaxSteps(record, maxSteps); };
-bool isMissionSuccessful(std::shared_ptr<CleaningRecord> record);
 void VacuumSimulator::setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm)
 {
     this->algorithm = std::move(algorithm);
 }
+
+const std::filesystem::path getOutFilePath(const std::filesystem::path &fileOutputPath, const std::string &algorithmName)
+{
+    return std::filesystem::current_path() / (fileOutputPath.stem().string() + "-" + algorithmName + ".txt");
+}
+const std::filesystem::path getSummaryFilePath()
+{
+    return std::filesystem::current_path() / "summary.csv";
+}
 void VacuumSimulator::run(std::string algorithmName)
 {
-
     auto record = calculate();
+    this->algorithmName = algorithmName;
+    this->record = record;
     if (record == nullptr)
     {
-        std::cerr << "cannot run!" << std::endl;
-        throw std::runtime_error("cannot run!");
+        std::cerr << "run failed" << std::endl;
+        throw std::runtime_error("run failed");
         return;
     }
-    OutFileWriter writer;
-    writer.write(fileInputpath, record, algorithmName);
+
+}
+
+void VacuumSimulator::canExport()
+{
+    if (record)
+    {
+        return;
+    }
+    std::cerr << "No results to add to summary." << std::endl;
+    throw std::runtime_error("No results.");
+    
+}
+std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
+{
+    auto fileOutputpath = getOutFilePath(fileInputpath, algorithmName);
+    std::ofstream writeStream(fileOutputpath);
+    canExport();
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream,timedOut);
+    return fileOutputpath;
+    
+}
+std::filesystem::path VacuumSimulator::exportSummary(bool timedOut)
+{
+    auto fileOutputpath = getSummaryFilePath();
+    std::string houseName = fileInputpath.stem().string();
+    canExport();
+    writeSummary(houseName,fileOutputpath,timedOut);
+    return fileOutputpath;
 }
 std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
 {
@@ -35,7 +77,7 @@ std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
     algorithm->setDirtSensor(runPayload.getHouse());
     algorithm->setMaxSteps(runPayload.getMaxSteps());
     auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay, runPayload.getBattery().getBatteryState(), runPayload.getHouse().getTotalDirt()), runPayload.getMaxSteps());
-    while (!shouldTerminate(record, runPayload.getMaxSteps()))
+    while (record->getMaxSteps() >= record->size())
     {
         auto step = algorithm->nextStep();
         if (step == Step::Finish)
@@ -52,17 +94,6 @@ std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
         record->add(nextMove.value());
     }
     return record;
-}
-
-bool isMissionSuccessful(std::shared_ptr<CleaningRecord> record)
-{
-    if (record->size() == 0)
-    {
-        return record->getInitialStep()->getDirtLevel() == 0;
-    }
-    auto dirtLevel = record->last()->getDirtLevel();
-    bool success = dirtLevel == 0 && isAtDockingStation(record);
-    return success;
 }
 
 std::optional<CleaningRecordStep> VacuumSimulator::applyStep(VacuumPayload &payload, Step step)
@@ -116,4 +147,139 @@ void VacuumSimulator::readHouseFile(const std::filesystem::path &fileInputpath)
     }
     payload = std::move(parsedPayload);
     this->fileInputpath = fileInputpath;
+    this->record = nullptr;
+}
+
+void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path,bool timedOut)
+{
+    std::ifstream inFile(path);
+    std::ofstream outFile;
+    std::vector<std::string> houseNames;
+    std::vector<std::string> algorithmNames;
+    std::vector<std::vector<std::string>> tableData;
+    std::string line;
+    uint32_t score = VacuumScoreCalculator().calculateScore(record,timedOut);
+
+    if (inFile.is_open())
+    {
+        bool firstLine = true;
+        while (std::getline(inFile, line))
+        {
+            std::stringstream ss(line);
+            std::string cell;
+
+            if (firstLine)
+            {
+                while (std::getline(ss, cell, ','))
+                {
+                    if (!cell.empty())
+                    {
+                        houseNames.push_back(cell);
+                    }
+                }
+                firstLine = false;
+            }
+            else
+            {
+                std::vector<std::string> rowData;
+                bool hasData = false;
+
+                while (std::getline(ss, cell, ','))
+                {
+                    rowData.push_back(cell);
+                    if (!cell.empty())
+                    {
+                        hasData = true;
+                    }
+                }
+
+                if (hasData) // Only add rows that contain data
+                {
+                    algorithmNames.push_back(rowData[0]);
+                    tableData.push_back(rowData);
+                }
+            }
+        }
+        inFile.close();
+    }
+
+    bool newHouse = std::find(houseNames.begin(), houseNames.end(), houseName) == houseNames.end();
+    bool newAlgorithm = true;
+
+    size_t algoIndex = 0;
+    for (size_t i = 0; i < algorithmNames.size(); ++i)
+    {
+        if (algorithmNames[i] == algorithmName)
+        {
+            newAlgorithm = false;
+            algoIndex = i;
+            break;
+        }
+    }
+
+    if (newHouse)
+    {
+        houseNames.push_back(houseName);
+    }
+
+    if (newAlgorithm)
+    {
+        algorithmNames.push_back(algorithmName);
+        tableData.push_back(std::vector<std::string>(houseNames.size() + 1, "")); 
+        tableData.back()[0] = algorithmName; // Set the algorithm name in the new row
+        algoIndex = tableData.size() - 1;
+    }
+
+    size_t houseIndex = std::distance(houseNames.begin(), std::find(houseNames.begin(), houseNames.end(), houseName));
+    std::string scoreStr = std::to_string(score);
+    if (tableData[algoIndex].size() <= houseIndex + 1)
+    {
+        tableData[algoIndex].push_back(scoreStr);
+    }
+    else
+    {
+        tableData[algoIndex][houseIndex+1] = scoreStr;
+    }
+
+    // Open the file in truncate mode to overwrite with updated data
+    outFile.open(path, std::ios_base::out | std::ios_base::trunc);
+
+    if (outFile.is_open())
+    {
+        // Write the header row (houses)
+        houseNames.insert(houseNames.begin(), "");
+        for (const auto &house : houseNames)
+        {
+            outFile << house << ",";
+        }
+        outFile << "\n";
+
+        // Write each algorithm's scores
+        for (const auto &row : tableData)
+        {
+            for (const auto &cell : row)
+            {
+                outFile << cell << ",";
+            }
+            outFile << "\n";
+        }
+        outFile.close();
+    }
+}
+
+
+void VacuumSimulator::writeOutFile(std::ofstream &writeStream,bool timedOut)
+{
+    auto recordLast = record->last();
+    auto inDock = recordLast->isAtDockingStation(); 
+    auto score = VacuumScoreCalculator().calculateScore(record,timedOut);
+    writeStream << "NumSteps = " << record->size() << std::endl;
+    writeStream << "DirtLeft = " << recordLast->getDirtLevel() << std::endl;
+    writeStream << "Status = " << record->getStatus() << std::endl;
+    writeStream << "InDock = " << (inDock ? "TRUE" : "FALSE") << std::endl;
+    writeStream << "Score = " << score << std::endl;
+    writeStream << "Steps: \n"
+            << *record << std::endl;
+    writeStream.close();
+    
 }

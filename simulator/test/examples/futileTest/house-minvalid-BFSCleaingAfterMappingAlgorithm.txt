@@ -1,7 +1,0 @@
-NumSteps = 0
-DirtLeft = 0
-Status = FINISHED
-InDock = TRUE
-Score = 0
-Steps: 
-F

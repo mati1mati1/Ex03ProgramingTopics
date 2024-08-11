@@ -1,7 +1,0 @@
-NumSteps = 5
-DirtLeft = 6
-Status = FINISHED
-InDock = TRUE
-Score = 1805
-Steps: 
-EsssWF
