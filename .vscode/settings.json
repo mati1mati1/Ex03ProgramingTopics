@@ -94,4 +94,5 @@
         "cassert": "cpp",
         "queue": "cpp"
     },
+    "cmake.sourceDirectory": "/home/matan/cpp/Ex03ProgramingTopics/simulator",
 }

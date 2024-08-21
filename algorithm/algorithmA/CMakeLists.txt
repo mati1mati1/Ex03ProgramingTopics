@@ -27,10 +27,14 @@ include_directories(${GRANDPARENT_DIR}/common/)
 include_directories(${GRANDPARENT_DIR})
 
 add_library(
-  BFSSimultaneousMappingAndCleaningAlgorithm SHARED
+  323012971_315441972_A SHARED
   ${PROJECT_SOURCE_DIR}/src/BFSSimultaneousMappingAndCleaningAlgorithm.cpp
   ${COMMON_ALGORITHM_DIR}/src/MappingAlgorithm.cpp
   ${COMMON_ALGORITHM_DIR}/src/MappingGraph.cpp
   ${GRANDPARENT_DIR}/common/src/Coordinate.cpp
   ${GRANDPARENT_DIR}/common/src/HouseLocation.cpp
+)
+
+set_target_properties(323012971_315441972_A PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib
 )
