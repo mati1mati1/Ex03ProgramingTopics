@@ -1,9 +1,9 @@
 #pragma once
 #include "MappingAlgorithm.hpp"
 
-class BFSSimultaneousMappingAndCleaningAlgorithm : public MappingAlgorithm {
+class Algo_323012971_315441972_Simultaneous : public MappingAlgorithm {
 public:
-    virtual ~BFSSimultaneousMappingAndCleaningAlgorithm() {}
+    virtual ~Algo_323012971_315441972_Simultaneous() {}
 
 protected:
     std::optional<Step> findStepToNearestDirtyOrUnknownTile() const ;

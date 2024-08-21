@@ -1,11 +1,11 @@
 #include "SpecificAlgorithmTest.hpp"
+
 class BFSSimultaneousMappingAndCleaningAlgorithmTest : public SpecificAlgorithmTest{
 public:
     void StartTest(std::filesystem::path inputfile)
     {
-        SpecificAlgorithmTest::StartTest(inputfile,"../lib/lib323012971_315441972_B.so");
+        SpecificAlgorithmTest::StartTest(inputfile, "../lib/libAlgo_323012971_315441972_Simultaneous.so");
     }
-
 };
 class FutileTest : public BFSSimultaneousMappingAndCleaningAlgorithmTest
 {

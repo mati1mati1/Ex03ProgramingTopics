@@ -1,10 +1,10 @@
 #pragma once
 #include "MappingAlgorithm.hpp"
 
-class BFSCleaingAfterMappingAlgorithm : public MappingAlgorithm
+class Algo_323012971_315441972_Orignal : public MappingAlgorithm
 {
 public:
-    virtual ~BFSCleaingAfterMappingAlgorithm() {}
+    virtual ~Algo_323012971_315441972_Orignal() {}
 
 protected:
     std::optional<Step> findStepToNearestDirtyTile() const;

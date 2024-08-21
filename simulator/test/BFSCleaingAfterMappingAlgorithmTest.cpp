@@ -1,9 +1,11 @@
 #include "SpecificAlgorithmTest.hpp"
+
+
 class BFSCleaingAfterMappingAlgorithmTest : public SpecificAlgorithmTest{
 public:
     void StartTest(std::filesystem::path inputfile)
     {
-        SpecificAlgorithmTest::StartTest(inputfile,"../lib/lib323012971_315441972_A.so");
+        SpecificAlgorithmTest::StartTest(inputfile, "../lib/libAlgo_323012971_315441972_Orignal.so");
     }
 
 };

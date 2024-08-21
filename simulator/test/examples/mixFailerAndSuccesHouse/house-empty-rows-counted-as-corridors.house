@@ -1,0 +1,10 @@
+house-empty-roWs-counted-as-corridors
+MaxSteps =100
+MaxBattery = 100
+Rows = 2
+Cols= 3
+
+D1W
+WWW
+113
+
