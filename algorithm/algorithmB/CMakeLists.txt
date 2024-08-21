@@ -38,3 +38,6 @@ add_library(
 set_target_properties(Algo_323012971_315441972_Orignal PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib
 )
+set_target_properties(Algo_323012971_315441972_Orignal PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+)
