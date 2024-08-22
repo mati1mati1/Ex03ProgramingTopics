@@ -13,7 +13,10 @@ public:
         uint32_t dirtScore = record->last()->getDirtLevel() * 300; 
         bool inDock = record->last()->isAtDockingStation();
         auto status = record->getStatus();
-        if (timedOut || status == Status::DEAD)
+        if(timedOut){
+            return record->getMaxSteps() * 2 + record->getInitialDirt() * 300 + 2000;
+        }
+        if (status == Status::DEAD)
         {
             return record->getMaxSteps() + dirtScore + 2000;
         }

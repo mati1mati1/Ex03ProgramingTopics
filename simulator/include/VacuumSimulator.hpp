@@ -11,7 +11,7 @@ class VacuumSimulator : public Simulator
 public:
     VacuumSimulator() {};
     void run(std::string algorithmName) override;
-    void exportRecord(const std::shared_ptr<CleaningRecord> record, const std::string &algorithmName);
+    std::filesystem::path exportRecord(const std::shared_ptr<CleaningRecord> record, const std::filesystem::path &fileOutputpath, bool timedOut);
     void setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm);
     void readHouseFile(const std::filesystem::path &fileInputpath);
     auto getMaxTime() const { return payload->getMaxTime(); }

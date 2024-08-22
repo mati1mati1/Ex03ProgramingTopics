@@ -128,17 +128,20 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   )
   target_link_libraries(BatchVacuumSimulatorTest Boost::filesystem Boost::program_options Boost::thread)
   
-  # add_gtest_executable(
-  #   OutFileWriterTest
-  #   ${PROJECT_SOURCE_DIR}/VacuumParser.cpp
-  #   ${PARENT_DIR}/common/src/HouseLocation.cpp
-  #   ${PARENT_DIR}/common/src/Coordinate.cpp
-  #   ${PROJECT_SOURCE_DIR}/VacuumHouse.cpp
-  #   ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
-  #   ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
-  #   ${PROJECT_SOURCE_DIR}/OutFileWriter.cpp
-  #   ${PROJECT_SOURCE_DIR}/test/OutFileWriterTest.cpp
-  # )
+  add_gtest_executable(
+    OutFileWriterTest
+    ${PROJECT_SOURCE_DIR}/VacuumSimulator.cpp
+    ${PROJECT_SOURCE_DIR}/VacuumParser.cpp
+    ${PARENT_DIR}/common/src/HouseLocation.cpp
+    ${PROJECT_SOURCE_DIR}/VacuumHouse.cpp
+    ${PROJECT_SOURCE_DIR}/MeteredVacuumBattery.cpp
+    ${PARENT_DIR}/common/src/Coordinate.cpp
+    ${PROJECT_SOURCE_DIR}/BatchVacuumSimulator.cpp
+    ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
+    ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
+    ${PROJECT_SOURCE_DIR}/AlgorithmRegistrar.cpp
+    ${PROJECT_SOURCE_DIR}/test/OutFileWriterTest.cpp
+  )
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Werror -pedantic -rdynamic")
 endif()
