@@ -211,7 +211,7 @@ TEST_F(VacuumSimulatorTest, TIMEOUT) {
     std::ifstream outFileRead(resultPath);
     ASSERT_TRUE(outFileRead.is_open());
 
-    uint32_t score = 10 * 2 + 7 * 300 + 2000 ;
+    uint32_t score = 10 * 2 + 10 * 300 + 2000 ;
     std::string line;
     std::getline(outFileRead, line);
     EXPECT_EQ(line, "NumSteps = 12");
