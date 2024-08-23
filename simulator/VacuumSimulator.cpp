@@ -42,17 +42,7 @@ void VacuumSimulator::canExport()
     throw std::runtime_error("No results.");
     
 }
-std::filesystem::path VacuumSimulator::exportRecord(const std::shared_ptr<CleaningRecord> record, const std::filesystem::path &fileOutputpath, bool timedOut) {
-    std::ofstream writeStream(fileOutputpath);
-    if (!writeStream.is_open())
-    {
-        std::cerr << "Unable to open file." << std::endl;    
-        throw std::runtime_error("Unable to open file.");
-    }
-    this->record = record;
-    writeOutFile(writeStream,timedOut);
-    return fileOutputpath;
-}
+
 std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
 {
     auto fileOutputpath = getOutFilePath(fileInputpath, algorithmName);

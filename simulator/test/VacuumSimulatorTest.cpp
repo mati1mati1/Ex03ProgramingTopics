@@ -18,6 +18,10 @@ protected:
     void TearDown() override {
         std::filesystem::remove_all(testOutputDir);
     }
+    void writeOutFile(std::ofstream &writeStream, bool timedOut){
+        simulator->record = record;
+        simulator->writeOutFile(writeStream, timedOut);
+    }
 
     std::unique_ptr<VacuumSimulator> simulator;
     std::shared_ptr<CleaningRecord> record;
@@ -30,10 +34,14 @@ TEST_F(VacuumSimulatorTest, WORKING) {
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::Stay, 2, 9));
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::West, 1, 9));
     
-    std::filesystem::path outputFilePath = testOutputDir / "VacuumSimulatorTest-working.txt";
-    auto resultPath = simulator->exportRecord(record, outputFilePath, false); 
-
-    ASSERT_TRUE(std::filesystem::exists(resultPath));
+    std::filesystem::path resultPath = testOutputDir / "VacuumSimulatorTest-working.txt";
+    std::ofstream writeStream(resultPath);
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream, false);
     
     std::ifstream outFileRead(resultPath);
     ASSERT_TRUE(outFileRead.is_open());
@@ -71,8 +79,15 @@ TEST_F(VacuumSimulatorTest, DEAD) {
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::West, 1, 9));
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::North, 0, 9));
 
-    std::filesystem::path outputFilePath = testOutputDir / "VacuumSimulatorTest-dead.txt";
-    auto resultPath = simulator->exportRecord(record, outputFilePath, false); 
+    std::filesystem::path resultPath = testOutputDir / "VacuumSimulatorTest-dead.txt";
+
+    std::ofstream writeStream(resultPath);
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream, false);
 
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
@@ -106,9 +121,14 @@ TEST_F(VacuumSimulatorTest, DEAD) {
 }
 
 TEST_F(VacuumSimulatorTest, WithoutStep) {
-    std::filesystem::path outputFilePath = testOutputDir / "VacuumSimulatorTest-withoutstep.txt";
-    auto resultPath = simulator->exportRecord(record, outputFilePath, false); 
-
+    std::filesystem::path resultPath = testOutputDir / "VacuumSimulatorTest-withoutstep.txt";
+    std::ofstream writeStream(resultPath);
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream, false);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);
@@ -155,9 +175,15 @@ TEST_F(VacuumSimulatorTest, FINISHED) {
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::West, 1, 0));
     record->add(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Finish, 0, 0));
 
-    std::filesystem::path outputFilePath = testOutputDir / "VacuumSimulatorTest-finished.txt";
-    auto resultPath = simulator->exportRecord(record, outputFilePath, false); 
+    std::filesystem::path resultPath = testOutputDir / "VacuumSimulatorTest-finished.txt";
 
+    std::ofstream writeStream(resultPath);
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream, false);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);
@@ -203,9 +229,14 @@ TEST_F(VacuumSimulatorTest, TIMEOUT) {
     record->add(CleaningRecordStep(LocationType::HOUSE_TILE, Step::West, 1, 0));
     record->add(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Finish, 0, 0));
 
-    std::filesystem::path outputFilePath = testOutputDir / "VacuumSimulatorTest-timeout.txt";
-    auto resultPath = simulator->exportRecord(record, outputFilePath, true); 
-
+    std::filesystem::path resultPath = testOutputDir / "VacuumSimulatorTest-timeout.txt";
+    std::ofstream writeStream(resultPath);
+    if (!writeStream.is_open())
+    {
+        std::cerr << "Unable to open file." << std::endl;    
+        throw std::runtime_error("Unable to open file.");
+    }
+    writeOutFile(writeStream, true);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);

@@ -49,163 +49,163 @@ std::string generateOutputFileName(const std::string& houseFileName, const std::
     std::vector<std::filesystem::path> algoFiles;
 };
 
-// TEST_F(BatchVacuumSimulatorTest, ValidHousesAndAlgorithms) {
-//     const char* housePath = "../simulator/test/examples/cleaningTest";
-//     const char* algoPath = "../lib";
+TEST_F(BatchVacuumSimulatorTest, ValidHousesAndAlgorithms) {
+    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* algoPath = "../lib";
 
-//     std::string house_arg = std::string("-house_path=") + housePath;
-//     std::string algo_arg = std::string("-algo_path=") + algoPath;
+    std::string house_arg = std::string("-house_path=") + housePath;
+    std::string algo_arg = std::string("-algo_path=") + algoPath;
 
-//     const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
-//     int argc = sizeof(argv) / sizeof(char*);
-//     EXPECT_NO_THROW({
-//         SimulationArguments args(argc, const_cast<char**>(argv));
-//         BatchVacuumSimulator simulator;
-//         simulator.run(args);
-//     });
-//     insertFilesWithExtension(housePath, houseFiles, ".house");
-//     insertFilesWithExtension(algoPath, algoFiles, ".so");
-//     for (const auto& houseFile : houseFiles) {
-//         std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//         for (const auto& algoFile : algoFiles) {
-//             std::string outputFileName = generateOutputFileName(houseFile, algoFile);
-//             ASSERT_TRUE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
+    const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
+    int argc = sizeof(argv) / sizeof(char*);
+    EXPECT_NO_THROW({
+        SimulationArguments args(argc, const_cast<char**>(argv));
+        BatchVacuumSimulator simulator;
+        simulator.run(args);
+    });
+    insertFilesWithExtension(housePath, houseFiles, ".house");
+    insertFilesWithExtension(algoPath, algoFiles, ".so");
+    for (const auto& houseFile : houseFiles) {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+        for (const auto& algoFile : algoFiles) {
+            std::string outputFileName = generateOutputFileName(houseFile, algoFile);
+            ASSERT_TRUE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
 
-//         }
-//     }
+        }
+    }
 
-//     for (const auto& algoFile : algoFiles) {
-//         std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
-//     }
-//     ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist";
+    for (const auto& algoFile : algoFiles) {
+        std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
+    }
+    ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist";
 
        
-// }
-// TEST_F(BatchVacuumSimulatorTest, ValidHousesAndInvalidHouses) {
-//     const char* housePath = "../simulator/test/examples/mixFailerAndSuccesHouse";
-//     const char* algoPath = "../lib";
+}
+TEST_F(BatchVacuumSimulatorTest, ValidHousesAndInvalidHouses) {
+    const char* housePath = "../simulator/test/examples/mixFailerAndSuccesHouse";
+    const char* algoPath = "../lib";
 
-//     std::string house_arg = std::string("-house_path=") + housePath;
-//     std::string algo_arg = std::string("-algo_path=") + algoPath;
+    std::string house_arg = std::string("-house_path=") + housePath;
+    std::string algo_arg = std::string("-algo_path=") + algoPath;
 
-//     const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
-//     int argc = sizeof(argv) / sizeof(char*);
-//     EXPECT_NO_THROW({
-//         SimulationArguments args(argc, const_cast<char**>(argv));
-//         BatchVacuumSimulator simulator;
-//         simulator.run(args);
-//     });
-//     insertFilesWithExtension(housePath, houseFiles, ".house");
-//     insertFilesWithExtension(algoPath, algoFiles, ".so");
-//     for (const auto& houseFile : houseFiles) {
-//         std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error"; 
-//         if (houseFile.stem().string().rfind("faild", 0) == 0) {
-//             ASSERT_TRUE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//         } else {
-//             ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//             for (const auto& algoFile : algoFiles) {
-//                 std::string outputFileName = generateOutputFileName(houseFile, algoFile);
-//                 ASSERT_TRUE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
-//             }
-//         }  
-//     }
-//     for (const auto& algoFile : algoFiles) {
-//         std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
-//     }
-//     ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist"; 
-// }
+    const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
+    int argc = sizeof(argv) / sizeof(char*);
+    EXPECT_NO_THROW({
+        SimulationArguments args(argc, const_cast<char**>(argv));
+        BatchVacuumSimulator simulator;
+        simulator.run(args);
+    });
+    insertFilesWithExtension(housePath, houseFiles, ".house");
+    insertFilesWithExtension(algoPath, algoFiles, ".so");
+    for (const auto& houseFile : houseFiles) {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error"; 
+        if (houseFile.stem().string().rfind("faild", 0) == 0) {
+            ASSERT_TRUE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+        } else {
+            ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+            for (const auto& algoFile : algoFiles) {
+                std::string outputFileName = generateOutputFileName(houseFile, algoFile);
+                ASSERT_TRUE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
+            }
+        }  
+    }
+    for (const auto& algoFile : algoFiles) {
+        std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
+    }
+    ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist"; 
+}
 
-// TEST_F(BatchVacuumSimulatorTest, InvalidHouseFile) {
-//     const char* housePath = "../simulator/test/examples/failtests";
-//     const char* algoPath = "../lib";
+TEST_F(BatchVacuumSimulatorTest, InvalidHouseFile) {
+    const char* housePath = "../simulator/test/examples/failtests";
+    const char* algoPath = "../lib";
 
-//     std::string house_arg = std::string("-house_path=") + housePath;
-//     std::string algo_arg = std::string("-algo_path=") + algoPath;
+    std::string house_arg = std::string("-house_path=") + housePath;
+    std::string algo_arg = std::string("-algo_path=") + algoPath;
 
-//     const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
-//     int argc = sizeof(argv) / sizeof(char*);
-//     EXPECT_NO_THROW({
-//         SimulationArguments args(argc, const_cast<char**>(argv));
-//         BatchVacuumSimulator simulator;
-//         simulator.run(args);
-//     });
-//     insertFilesWithExtension(housePath, houseFiles, ".house");
-//     insertFilesWithExtension(algoPath, algoFiles, ".so");
-//     for (const auto& houseFile : houseFiles) {
-//         std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
-//         ASSERT_TRUE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//     }
+    const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str()};
+    int argc = sizeof(argv) / sizeof(char*);
+    EXPECT_NO_THROW({
+        SimulationArguments args(argc, const_cast<char**>(argv));
+        BatchVacuumSimulator simulator;
+        simulator.run(args);
+    });
+    insertFilesWithExtension(housePath, houseFiles, ".house");
+    insertFilesWithExtension(algoPath, algoFiles, ".so");
+    for (const auto& houseFile : houseFiles) {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
+        ASSERT_TRUE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+    }
 
-//     for (const auto& algoFile : algoFiles) {
-//         std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
-//     }
+    for (const auto& algoFile : algoFiles) {
+        std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
+    }
 
-// }
-// TEST_F(BatchVacuumSimulatorTest, SummaryOnlyOption) {
-//     const char* housePath = "../simulator/test/examples/cleaningTest";
-//     const char* algoPath = "../lib";
+}
+TEST_F(BatchVacuumSimulatorTest, SummaryOnlyOption) {
+    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* algoPath = "../lib";
 
-//     std::string house_arg = std::string("-house_path=") + housePath;
-//     std::string algo_arg = std::string("-algo_path=") + algoPath;
+    std::string house_arg = std::string("-house_path=") + housePath;
+    std::string algo_arg = std::string("-algo_path=") + algoPath;
 
-//     const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str(), "-summary_only"};
-//     int argc = sizeof(argv) / sizeof(char*);
-//     EXPECT_NO_THROW({
-//         SimulationArguments args(argc, const_cast<char**>(argv));
-//         BatchVacuumSimulator simulator;
-//         simulator.run(args);
-//     });
-//     insertFilesWithExtension(housePath, houseFiles, ".house");
-//     insertFilesWithExtension(algoPath, algoFiles, ".so");
-//     for (const auto& houseFile : houseFiles) {
-//         std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//         for (const auto& algoFile : algoFiles) {
-//             std::string outputFileName = generateOutputFileName(houseFile, algoFile);
-//             ASSERT_FALSE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
-//         }
-//     }
-//     for (const auto& algoFile : algoFiles) {
-//         std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
-//     }
-//     ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist";
+    const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str(), "-summary_only"};
+    int argc = sizeof(argv) / sizeof(char*);
+    EXPECT_NO_THROW({
+        SimulationArguments args(argc, const_cast<char**>(argv));
+        BatchVacuumSimulator simulator;
+        simulator.run(args);
+    });
+    insertFilesWithExtension(housePath, houseFiles, ".house");
+    insertFilesWithExtension(algoPath, algoFiles, ".so");
+    for (const auto& houseFile : houseFiles) {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+        for (const auto& algoFile : algoFiles) {
+            std::string outputFileName = generateOutputFileName(houseFile, algoFile);
+            ASSERT_FALSE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
+        }
+    }
+    for (const auto& algoFile : algoFiles) {
+        std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
+    }
+    ASSERT_TRUE(fileExists("summary.csv")) << "summary file dont exist";
 
-// }
-// TEST_F(BatchVacuumSimulatorTest, ErrorFileForInvalidAlgorithm) {
-//     const char* housePath = "../simulator/test/examples/cleaningTest";
-//     const char* algoPath = "../badLib";
+}
+TEST_F(BatchVacuumSimulatorTest, ErrorFileForInvalidAlgorithm) {
+    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* algoPath = "../badLib";
 
-//     std::string house_arg = std::string("-house_path=") + housePath;
-//     std::string algo_arg = std::string("-algo_path=") + algoPath;
+    std::string house_arg = std::string("-house_path=") + housePath;
+    std::string algo_arg = std::string("-algo_path=") + algoPath;
 
-//     const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str(), "-summary_only"};
-//     int argc = sizeof(argv) / sizeof(char*);
-//     EXPECT_NO_THROW({
-//         SimulationArguments args(argc, const_cast<char**>(argv));
-//         BatchVacuumSimulator simulator;
-//         simulator.run(args);
-//     });
-//     insertFilesWithExtension(housePath, houseFiles, ".house");
-//     insertFilesWithExtension(algoPath, algoFiles, ".so");
-//     for (const auto& houseFile : houseFiles) {
-//         std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
-//         ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
-//         for (const auto& algoFile : algoFiles) {
-//             std::string outputFileName = generateOutputFileName(houseFile, algoFile);
-//             ASSERT_FALSE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
-//         }
-//     }
-//     for (const auto& algoFile : algoFiles) {
-//         std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
-//         ASSERT_TRUE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
-//     }
-//     ASSERT_FALSE(fileExists("summary.csv")) << "summary file dont exist";
-// }
+    const char* argv[] = {"myrobot", house_arg.c_str(), algo_arg.c_str(), "-summary_only"};
+    int argc = sizeof(argv) / sizeof(char*);
+    EXPECT_NO_THROW({
+        SimulationArguments args(argc, const_cast<char**>(argv));
+        BatchVacuumSimulator simulator;
+        simulator.run(args);
+    });
+    insertFilesWithExtension(housePath, houseFiles, ".house");
+    insertFilesWithExtension(algoPath, algoFiles, ".so");
+    for (const auto& houseFile : houseFiles) {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";    
+        ASSERT_FALSE(fileExists(houseErrorFile)) << "Error file exists for " << houseFile;
+        for (const auto& algoFile : algoFiles) {
+            std::string outputFileName = generateOutputFileName(houseFile, algoFile);
+            ASSERT_FALSE(fileExists(outputFileName)) << "Output file " << outputFileName << " does not exist!";
+        }
+    }
+    for (const auto& algoFile : algoFiles) {
+        std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";    
+        ASSERT_TRUE(fileExists(algoErrorFile)) << "Error file exists for " << algoFile;
+    }
+    ASSERT_FALSE(fileExists("summary.csv")) << "summary file dont exist";
+}
 
 TEST_F(BatchVacuumSimulatorTest, ValidAndInvalidAlgorithm) {
     const char* housePath = "../simulator/test/examples/cleaningTest";
