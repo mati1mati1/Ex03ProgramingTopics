@@ -59,3 +59,9 @@ uint32_t CleaningRecord::size() const {
     }
     return steps.size();
 }
+uint32_t CleaningRecord::getInitialDirt(){
+    if (hasInitialStep) {
+        return 0;
+    }
+    return steps[0]->getDirtLevel();
+}

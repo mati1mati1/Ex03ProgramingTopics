@@ -1,9 +1,11 @@
 #include "SpecificAlgorithmTest.hpp"
+
+
 class BFSCleaingAfterMappingAlgorithmTest : public SpecificAlgorithmTest{
 public:
     void StartTest(std::filesystem::path inputfile)
     {
-        SpecificAlgorithmTest::StartTest(inputfile,"../../algorithm/algorithmB/build/libBFSCleaingAfterMappingAlgorithm.so");
+        SpecificAlgorithmTest::StartTest(inputfile, "../lib/libAlgo_323012971_315441972_Orignal.so");
     }
 
 };
@@ -19,32 +21,32 @@ class CleaningTest : public BFSCleaingAfterMappingAlgorithmTest
 
 TEST_F(FutileTest, minHouse)
 {
-    StartTest("../test/examples/futileTest/house-minvalid.house");
+    StartTest("../simulator/test/examples/futileTest/house-minvalid.house");
     ASSERT_EQ(record->size(), 0);
 }
 TEST_F(FutileTest, tooLittleBatteryToDoAnythingUseful)
 {
-    StartTest("../test/examples/futileTest/house-return-small-battery.house");
+    StartTest("../simulator/test/examples/futileTest/house-return-small-battery.house");
     ASSERT_EQ(record->size(), 0);
 }
 TEST_F(FutileTest, houseLockedinWithDirt)
 {
-    StartTest("../test/examples/futileTest/house-closedin2.house");
+    StartTest("../simulator/test/examples/futileTest/house-closedin2.house");
     ASSERT_EQ(record->size(), 0);
 }
 TEST_F(FutileTest, houseMax0)
 {
-    StartTest("../test/examples/futileTest/house-max0.house");
+    StartTest("../simulator/test/examples/futileTest/house-max0.house");
     ASSERT_EQ(record->size(), 0);
 }
 TEST_F(FutileTest, closedInHouse)
 {
-    StartTest("../test/examples/futileTest/house-closedin.house");
+    StartTest("../simulator/test/examples/futileTest/house-closedin.house");
     ASSERT_EQ(record->size(), 0);
 }
 TEST_F(MappingTest, lineHouseSomeUnmappable)
 {
-    StartTest("../test/examples/mappingTest/house-linemappable-not-cleanable.house");
+    StartTest("../simulator/test/examples/mappingTest/house-linemappable-not-cleanable.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 1000);
     ASSERT_EQ(record->last()->getDirtLevel(), 9);
@@ -52,13 +54,13 @@ TEST_F(MappingTest, lineHouseSomeUnmappable)
 
 TEST_F(MappingTest, cleanHouse)
 {
-    StartTest("../test/examples/futileTest/house-nodirt.house");
+    StartTest("../simulator/test/examples/futileTest/house-nodirt.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 100);
 }
 TEST_F(MappingTest, lineHouse)
 {
-    StartTest("../test/examples/futileTest/house-line.house");
+    StartTest("../simulator/test/examples/futileTest/house-line.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 1000);
     ASSERT_EQ(record->last()->getDirtLevel(), 9);
@@ -66,63 +68,63 @@ TEST_F(MappingTest, lineHouse)
 
 TEST_F(MappingTest, bigEmptyWithReturningToChargeSomeUnmappble)
 {
-    StartTest("../test/examples/mappingTest/house-bigEmpty-someUnmappable.house");
+    StartTest("../simulator/test/examples/mappingTest/house-bigEmpty-someUnmappable.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 100000);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(MappingTest, bigEmptyWithReturningToChargeAllDiscoverable)
 {
-    StartTest("../test/examples/mappingTest/house-bigEmpty.house");
+    StartTest("../simulator/test/examples/mappingTest/house-bigEmpty.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 100000);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(MappingTest, bigEmptyWithReturningToChargeSomeUnDiscoverable)
 {
-    StartTest("../test/examples/mappingTest/house-bigEmpty-allFoundButSomeUndiscoverable.house");
+    StartTest("../simulator/test/examples/mappingTest/house-bigEmpty-allFoundButSomeUndiscoverable.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 100000);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, house)
 {
-    StartTest("../test/examples/cleaningTest/house.house");
+    StartTest("../simulator/test/examples/cleaningTest/house.house");
     ASSERT_EQ(record->size(), 10);
     ASSERT_EQ((*record)[0]->getDirtLevel(), 26);
     ASSERT_LT(record->last()->getDirtLevel(), 26);
 }
 TEST_F(CleaningTest, houseCorridors)
 {
-    StartTest("../test/examples/cleaningTest/house-coridors.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-coridors.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 100);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, houseCorridorsWithEmptyRows)
 {
-    StartTest("../test/examples/cleaningTest/house-empty-rows-counted-as-corridors.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-empty-rows-counted-as-corridors.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 11);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, houseMaxSteps)
 {
-    StartTest("../test/examples/cleaningTest/house-maxsteps.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-maxsteps.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_EQ(record->size(), 5);
     ASSERT_EQ(record->last()->getDirtLevel(), 6);
 }
 TEST_F(CleaningTest, houseExatStepsAsMaxTest)
 {
-    StartTest("../test/examples/cleaningTest/house-partial-exact-steps.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-partial-exact-steps.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LE(record->size(), 32);
     ASSERT_EQ(record->last()->getDirtLevel(), 17);
 }
 TEST_F(CleaningTest, littleBattery)
 {
-    StartTest("../test/examples/cleaningTest/house-return-small-battery2.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-return-small-battery2.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 200);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
@@ -130,28 +132,28 @@ TEST_F(CleaningTest, littleBattery)
 
 TEST_F(CleaningTest, narrowHouse)
 {
-    StartTest("../test/examples/cleaningTest/house-narrow.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-narrow.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 25);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, narrowHouseExactBattery)
 {
-    StartTest("../test/examples/cleaningTest/house-narrow-exact-battery-andsteps.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-narrow-exact-battery-andsteps.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 25);
     ASSERT_LT(record->last()->getDirtLevel(), 4);
 }
 TEST_F(CleaningTest, narrowHouseExactSteps)
 {
-    StartTest("../test/examples/cleaningTest/house-narrow-exact-battery.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-narrow-exact-battery.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_LT(record->size(), 25);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, housePartial)
 {
-    StartTest("../test/examples/cleaningTest/house-partial.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-partial.house");
     ASSERT_NE(record->size(), 0);
     ASSERT_NE(record->size(), 1000);
     ASSERT_GT((*record)[0]->getDirtLevel(), 17);
@@ -159,13 +161,13 @@ TEST_F(CleaningTest, housePartial)
 }
 TEST_F(CleaningTest, houseSparse)
 {
-    StartTest("../test/examples/cleaningTest/house-sparse.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-sparse.house");
     ASSERT_GT((*record)[0]->getDirtLevel(), 100);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
 }
 TEST_F(CleaningTest, houseSparse2)
 {
-    StartTest("../test/examples/cleaningTest/house-sparse2.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-sparse2.house");
     ASSERT_GT((*record)[0]->getDirtLevel(), 10);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
     ASSERT_NE(record->size(), 0);
@@ -173,7 +175,7 @@ TEST_F(CleaningTest, houseSparse2)
 }
 TEST_F(CleaningTest, houseBig)
 {
-    StartTest("../test/examples/cleaningTest/house-big.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-big.house");
     ASSERT_GT((*record)[0]->getDirtLevel(), 200);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
     ASSERT_NE(record->size(), 0);
@@ -182,7 +184,7 @@ TEST_F(CleaningTest, houseBig)
 }
 TEST_F(CleaningTest, houseBig1)
 {
-    StartTest("../test/examples/cleaningTest/house-big-1.house");
+    StartTest("../simulator/test/examples/cleaningTest/house-big-1.house");
     ASSERT_GT((*record)[0]->getDirtLevel(), 1000);
     ASSERT_EQ(record->last()->getDirtLevel(), 0);
     ASSERT_NE(record->size(), 0);

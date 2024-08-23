@@ -27,10 +27,17 @@ include_directories(${GRANDPARENT_DIR}/common/)
 include_directories(${GRANDPARENT_DIR})
 
 add_library(
-  BFSCleaingAfterMappingAlgorithm SHARED
-  ${PROJECT_SOURCE_DIR}/src/BFSCleaingAfterMappingAlgorithm.cpp
+  Algo_323012971_315441972_Orignal SHARED
+  ${PROJECT_SOURCE_DIR}/src/Algo_323012971_315441972_Orignal.cpp
   ${COMMON_ALGORITHM_DIR}/src/MappingAlgorithm.cpp
   ${COMMON_ALGORITHM_DIR}/src/MappingGraph.cpp
   ${GRANDPARENT_DIR}/common/src/Coordinate.cpp
   ${GRANDPARENT_DIR}/common/src/HouseLocation.cpp
+)
+
+set_target_properties(Algo_323012971_315441972_Orignal PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib
+)
+set_target_properties(Algo_323012971_315441972_Orignal PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
 )

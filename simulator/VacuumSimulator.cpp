@@ -42,6 +42,7 @@ void VacuumSimulator::canExport()
     throw std::runtime_error("No results.");
     
 }
+
 std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
 {
     auto fileOutputpath = getOutFilePath(fileInputpath, algorithmName);
@@ -272,7 +273,7 @@ void VacuumSimulator::writeOutFile(std::ofstream &writeStream,bool timedOut)
 {
     auto recordLast = record->last();
     auto inDock = recordLast->isAtDockingStation(); 
-    auto score = VacuumScoreCalculator().calculateScore(record,timedOut);
+    auto score = VacuumScoreCalculator().calculateScore(record, timedOut);
     writeStream << "NumSteps = " << record->size() << std::endl;
     writeStream << "DirtLeft = " << recordLast->getDirtLevel() << std::endl;
     writeStream << "Status = " << record->getStatus() << std::endl;

@@ -4,13 +4,13 @@
         "name": "(gdb) Launch",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/build/myrobot",
+        "program": "${workspaceFolder}/build/BatchVacuumSimulatorTest",
         "args": ["/home/arels/dev/Ex02ProgramingTopics/test/examples/cleaningTest/house-coridors.txt"],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
         "environment": [],
         "externalConsole": false,
-        "MIMode": "lldb",
+        "MIMode": "gdb",
         "setupCommands": [
             {
                 "description": "Enable pretty-printing for gdb",

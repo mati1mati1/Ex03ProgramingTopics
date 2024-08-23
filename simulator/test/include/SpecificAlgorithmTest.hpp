@@ -12,7 +12,7 @@ protected:
         void *handle = dlopen(algorithmPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
         if (!handle)
         {
-            FAIL() << "Failed to open the algorithm file" << dlerror();
+            FAIL() << "Failed to open the algorithm file " << dlerror();
         }
         algoName = algorithmPath.stem().string();
         auto algorithm = AlgorithmRegistrar::getAlgorithmRegistrar().begin()->create();
@@ -43,5 +43,5 @@ protected:
     std::string algoName;
     void* handle;
     std::shared_ptr<CleaningRecord> record;
-    std::filesystem::path gt= "../test/examples/gt";
+    std::filesystem::path gt= "../simulator/test/examples/gt";
 };

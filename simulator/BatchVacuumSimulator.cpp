@@ -17,6 +17,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <dlfcn.h>
+
 class factoryException : public std::exception
 {
     public:

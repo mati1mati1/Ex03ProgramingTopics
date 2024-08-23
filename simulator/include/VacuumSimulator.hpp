@@ -11,13 +11,13 @@ class VacuumSimulator : public Simulator
 public:
     VacuumSimulator() {};
     void run(std::string algorithmName) override;
-    void exportRecord(const std::shared_ptr<CleaningRecord> record, const std::string &algorithmName);
     void setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm);
     void readHouseFile(const std::filesystem::path &fileInputpath);
     auto getMaxTime() const { return payload->getMaxTime(); }
     std::filesystem::path exportRecord(bool timedOut);
     std::filesystem::path exportSummary(bool timedOut);
     friend class SpecificAlgorithmTest;
+    friend class VacuumSimulatorTest;
 private:
     std::optional<CleaningRecordStep> applyStep(VacuumPayload &payload, Step step);
     std::shared_ptr<CleaningRecord> calculate();

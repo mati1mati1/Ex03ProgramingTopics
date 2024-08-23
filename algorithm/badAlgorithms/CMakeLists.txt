@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(BFSSimultaneousMappingAndCleaningAlgorithm)
+project(BFSCleaingAfterMappingAlgorithm)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -27,17 +27,35 @@ include_directories(${GRANDPARENT_DIR}/common/)
 include_directories(${GRANDPARENT_DIR})
 
 add_library(
-  Algo_323012971_315441972_Simultaneous SHARED
-  ${PROJECT_SOURCE_DIR}/src/Algo_323012971_315441972_Simultaneous.cpp
-  ${COMMON_ALGORITHM_DIR}/src/MappingAlgorithm.cpp
-  ${COMMON_ALGORITHM_DIR}/src/MappingGraph.cpp
-  ${GRANDPARENT_DIR}/common/src/Coordinate.cpp
-  ${GRANDPARENT_DIR}/common/src/HouseLocation.cpp
+  empty SHARED
+  ${PROJECT_SOURCE_DIR}/empty.cpp
+)
+add_library(
+  incorrectlyRegisterAlgorithm SHARED
+  ${PROJECT_SOURCE_DIR}/incorrectlyRegisterAlgorithm.cpp
+)
+add_library(
+  throwsError SHARED
+  ${PROJECT_SOURCE_DIR}/throwsError.cpp
 )
 
-set_target_properties(Algo_323012971_315441972_Simultaneous PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib
+set_target_properties(throwsError PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
 )
-set_target_properties(Algo_323012971_315441972_Simultaneous PROPERTIES
+
+set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
+)
+set_target_properties(empty PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
+)
+set_target_properties(throwsError PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+)
+
+set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+)
+set_target_properties(empty PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
 )

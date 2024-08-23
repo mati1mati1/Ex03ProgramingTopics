@@ -28,7 +28,8 @@ public:
     uint32_t getMaxSteps() const { return maxSteps; }
     Status getStatus() const;
     friend std::ostream& operator<<(std::ostream& os, const CleaningRecord& record);
-
+    uint32_t getInitialDirt();
+    
 private:
     bool hasInitialStep;
     uint32_t maxSteps;

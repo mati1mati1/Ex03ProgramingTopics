@@ -1,7 +1,7 @@
-#include "BFSSimultaneousMappingAndCleaningAlgorithm.hpp"
+#include "Algo_323012971_315441972_Simultaneous.hpp"
 #include "AlgorithmRegistration.h"
 
-std::optional<Step> BFSSimultaneousMappingAndCleaningAlgorithm::findStepToNearestDirtyOrUnknownTile() const {
+std::optional<Step> Algo_323012971_315441972_Simultaneous::findStepToNearestDirtyOrUnknownTile() const {
     if (!isExistsMappedCleanableTile()) {
         return std::nullopt;
     }
@@ -25,7 +25,7 @@ std::optional<Step> BFSSimultaneousMappingAndCleaningAlgorithm::findStepToNeares
 }
 
 
-Step BFSSimultaneousMappingAndCleaningAlgorithm::calculateNextStep() {
+Step Algo_323012971_315441972_Simultaneous::calculateNextStep() {
     if (auto forcedMove = getForcedMove()) {
         return *forcedMove;
     }
@@ -44,4 +44,4 @@ Step BFSSimultaneousMappingAndCleaningAlgorithm::calculateNextStep() {
     }
     return stepTowardsCharger();
 }
-REGISTER_ALGORITHM(BFSSimultaneousMappingAndCleaningAlgorithm);
+REGISTER_ALGORITHM(Algo_323012971_315441972_Simultaneous);

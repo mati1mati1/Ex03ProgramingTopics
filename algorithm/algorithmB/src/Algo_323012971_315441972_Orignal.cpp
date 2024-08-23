@@ -1,6 +1,6 @@
-#include "BFSCleaingAfterMappingAlgorithm.hpp"
+#include "Algo_323012971_315441972_Orignal.hpp"
 #include "AlgorithmRegistration.h"
-std::optional<Step> BFSCleaingAfterMappingAlgorithm::findStepToNearestDirtyTile() const
+std::optional<Step> Algo_323012971_315441972_Orignal::findStepToNearestDirtyTile() const
 {
     if (!isExistsMappedCleanableTile())
     {
@@ -26,7 +26,7 @@ std::optional<Step> BFSCleaingAfterMappingAlgorithm::findStepToNearestDirtyTile(
     return std::nullopt;
 }
 
-Step BFSCleaingAfterMappingAlgorithm::calculateNextStep()
+Step Algo_323012971_315441972_Orignal::calculateNextStep()
 {
     /*
         Before we even start calculating the next step we need to check if we are in a forced move situation
@@ -82,10 +82,10 @@ Step BFSCleaingAfterMappingAlgorithm::calculateNextStep()
     }
     return stepTowardsCharger();
 }
-bool BFSCleaingAfterMappingAlgorithm::isMappingStage() const
+bool Algo_323012971_315441972_Orignal::isMappingStage() const
 {
     return std::min(static_cast<uint32_t>(sqrt(getMaxSteps())), getMaxBattery()) > getStepsTaken() &&
            !isCompletelyMapped();
 }
 
-REGISTER_ALGORITHM(BFSCleaingAfterMappingAlgorithm);
+REGISTER_ALGORITHM(Algo_323012971_315441972_Orignal);
