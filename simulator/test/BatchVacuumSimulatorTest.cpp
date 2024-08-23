@@ -50,7 +50,7 @@ std::string generateOutputFileName(const std::string& houseFileName, const std::
 };
 
 TEST_F(BatchVacuumSimulatorTest, ValidHousesAndAlgorithms) {
-    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* housePath = "../test/examples/cleaningTest";
     const char* algoPath = "../lib";
 
     std::string house_arg = std::string("-house_path=") + housePath;
@@ -84,7 +84,7 @@ TEST_F(BatchVacuumSimulatorTest, ValidHousesAndAlgorithms) {
        
 }
 TEST_F(BatchVacuumSimulatorTest, ValidHousesAndInvalidHouses) {
-    const char* housePath = "../simulator/test/examples/mixFailerAndSuccesHouse";
+    const char* housePath = "../test/examples/mixFailerAndSuccesHouse";
     const char* algoPath = "../lib";
 
     std::string house_arg = std::string("-house_path=") + housePath;
@@ -119,7 +119,7 @@ TEST_F(BatchVacuumSimulatorTest, ValidHousesAndInvalidHouses) {
 }
 
 TEST_F(BatchVacuumSimulatorTest, InvalidHouseFile) {
-    const char* housePath = "../simulator/test/examples/failtests";
+    const char* housePath = "../test/examples/failtests";
     const char* algoPath = "../lib";
 
     std::string house_arg = std::string("-house_path=") + housePath;
@@ -146,7 +146,7 @@ TEST_F(BatchVacuumSimulatorTest, InvalidHouseFile) {
 
 }
 TEST_F(BatchVacuumSimulatorTest, SummaryOnlyOption) {
-    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* housePath = "../test/examples/cleaningTest";
     const char* algoPath = "../lib";
 
     std::string house_arg = std::string("-house_path=") + housePath;
@@ -177,7 +177,7 @@ TEST_F(BatchVacuumSimulatorTest, SummaryOnlyOption) {
 
 }
 TEST_F(BatchVacuumSimulatorTest, ErrorFileForInvalidAlgorithm) {
-    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* housePath = "../test/examples/cleaningTest";
     const char* algoPath = "../badLib";
 
     std::string house_arg = std::string("-house_path=") + housePath;
@@ -208,7 +208,7 @@ TEST_F(BatchVacuumSimulatorTest, ErrorFileForInvalidAlgorithm) {
 }
 
 TEST_F(BatchVacuumSimulatorTest, ValidAndInvalidAlgorithm) {
-    const char* housePath = "../simulator/test/examples/cleaningTest";
+    const char* housePath = "../test/examples/cleaningTest";
     const char* algoPath = "../badAndGoodLib";
 
     std::string house_arg = std::string("-house_path=") + housePath;

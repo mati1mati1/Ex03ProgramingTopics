@@ -93,7 +93,7 @@
         "filesystem": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.intelliSenseEngine": "default",
     "C_Cpp.files.exclude": {
         "**/build/**":true,
         "**/.vscode": true,

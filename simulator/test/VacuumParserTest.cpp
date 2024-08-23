@@ -14,7 +14,7 @@ protected:
 };
 TEST_F(VacuumParserTest, ParseInvalidHouses)
 {
-    std::filesystem::path directoryPath = "../simulator/test/examples/failtests/";
+    std::filesystem::path directoryPath = "../../badAndGoodLib/test/examples/failtests/";
     ASSERT_TRUE(std::filesystem::exists(directoryPath));
     ASSERT_GT(std::filesystem::hard_link_count(directoryPath),0);
     for (const auto & entry : std::filesystem::directory_iterator(directoryPath))
@@ -28,7 +28,7 @@ TEST_F(VacuumParserTest, ParseInvalidHouses)
 }
 TEST_F(VacuumParserTest, ParseValidHouses)
 {
-    std::filesystem::path directoryPath = "../simulator/test/examples/";
+    std::filesystem::path directoryPath = "../test/examples/";
     ASSERT_TRUE(std::filesystem::exists(directoryPath));
     ASSERT_GT(std::filesystem::hard_link_count(directoryPath),0);
     for (const auto & entry : std::filesystem::directory_iterator(directoryPath))
@@ -46,7 +46,7 @@ TEST_F(VacuumParserTest, ParseValidHouses)
 }
 TEST_F(VacuumParserTest, CheckParsing)
 {
-    std::filesystem::path filepath = "../simulator/test/examples/cleaningTest/house-coridors.house";
+    std::filesystem::path filepath = "../test/examples/cleaningTest/house-coridors.house";
     ASSERT_TRUE(std::filesystem::exists(filepath));
     auto vacuum = parser.parse(filepath);
     ASSERT_NE(vacuum,nullptr);

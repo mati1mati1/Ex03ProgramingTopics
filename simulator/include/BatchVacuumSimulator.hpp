@@ -2,7 +2,7 @@
 #include "SimulationArguments.hpp"
 #include <thread>
 #include <utility>
-
+#include <condition_variable>
 class Task
 {
     public:
@@ -29,8 +29,9 @@ class BatchVacuumSimulator
         inline static const std::filesystem::path CWD = std::filesystem::current_path();
         ~BatchVacuumSimulator();
     private:
-        bool removeCompletedTasks(uint8_t &numThreads,std::vector<std::unique_ptr<Task>> &tasks);
+        void waitForSpot(uint32_t &numThreads,std::vector<std::unique_ptr<Task>> &tasks);
         void waitAllTasks();
+        void reapTasks(std::vector<std::unique_ptr<Task>> &tasks);
         void clearRun();
         void reserveHandles(const std::vector<std::filesystem::path> & algorithmFiles);
         void enqueueTask(const SimulationArguments &args, const std::filesystem::path &houseFile, auto &algorithm);
@@ -39,6 +40,7 @@ class BatchVacuumSimulator
         std::vector<std::unique_ptr<Task>> tasks;
         std::vector<char> threadStatuses;
         std::mutex summaryMutex;
+        std::condition_variable queueNotifier;
         std::vector<void *> handles;
 
 

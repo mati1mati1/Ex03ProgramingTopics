@@ -43,5 +43,5 @@ protected:
     std::string algoName;
     void* handle;
     std::shared_ptr<CleaningRecord> record;
-    std::filesystem::path gt= "../simulator/test/examples/gt";
+    std::filesystem::path gt= "../test/examples/gt";
 };

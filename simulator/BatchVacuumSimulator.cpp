@@ -72,7 +72,8 @@ void writeErrorFile(const std::filesystem::path& houseFile, const std::string& e
 }
 
 
-void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> algorithm, const std::filesystem::path& houseFile,const SimulationArguments& args, char *threadStatus, std::mutex &summaryMutex)
+void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> algorithm, const std::filesystem::path& houseFile,
+    const SimulationArguments& args, char *threadStatus, std::mutex &summaryMutex, std::condition_variable &queueNotifier)
 {
     VacuumSimulator simulator;
     boost::asio::io_context context;
@@ -85,6 +86,7 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
         std::string errorMessage = "Error: Unable to read House file: " + houseFile.stem().string() + e.what();
         writeErrorFile(houseFile, errorMessage);
         *threadStatus = 1;
+        queueNotifier.notify_one();
         return;
     }
     auto maxTime = simulator.getMaxTime();
@@ -96,19 +98,16 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
             simulator.setAlgorithm(std::move(algorithm));
             simulator.run(name);
             context.stop();
-            *threadStatus = 1;
         }
         catch (const std::invalid_argument& e) {
             std::string errorMessage = "Error: Unable to parse House file: " + houseFile.stem().string() + e.what();
             writeErrorFile(houseFile, errorMessage);
             context.stop();
-            *threadStatus = 1;
         }
         catch (const std::exception& e) {
             std::string errorMessage = "Error: Simulator Error " + houseFile.stem().string() + e.what();
             writeErrorFile(houseFile, errorMessage);
             context.stop();
-            *threadStatus = 1;
         }
     });
 
@@ -116,7 +115,6 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
         if (!ec) {
             simFuture.wait_for(std::chrono::seconds(0));
             simFuture = {}; // effectively cancels the task
-            *threadStatus = 1;
             context.stop();
             isTimedOut = true;
         }
@@ -150,6 +148,7 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
     }
     
     *threadStatus = 1;
+    queueNotifier.notify_one();
 }
 
 
@@ -194,7 +193,8 @@ BatchVacuumSimulator::~BatchVacuumSimulator()
 {
     clearHandles();
 }
-bool BatchVacuumSimulator::removeCompletedTasks(uint8_t &numThreads, std::vector<std::unique_ptr<Task>> &tasks) {
+void BatchVacuumSimulator::reapTasks(std::vector<std::unique_ptr<Task>> &tasks)
+{
     for (auto task = tasks.begin(); task != tasks.end();) {
         if ((*task)->getMonitor() != 0 && (*task)->getThread().joinable()) {
             (*task)->getThread().join();
@@ -204,11 +204,21 @@ bool BatchVacuumSimulator::removeCompletedTasks(uint8_t &numThreads, std::vector
             ++task;
         }
     }
-    if (tasks.size() >= numThreads) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        return false;
+}
+void BatchVacuumSimulator::waitForSpot(uint32_t &numThreads, std::vector<std::unique_ptr<Task>> &tasks) {
+    std::mutex mutex;
+    std::unique_lock<std::mutex> lock(mutex); 
+    reapTasks(tasks);
+    if (tasks.size() < numThreads) {
+        return;
     }
-    return true;
+    queueNotifier.wait(lock, [&tasks, numThreads]() {
+        return std::any_of(tasks.begin(), tasks.end(), [](const auto &task) {
+            return task->getMonitor() != 0 && task->getThread().joinable();
+        }) || tasks.size() < numThreads;
+    });
+    reapTasks(tasks);
+
 }
 void BatchVacuumSimulator::enqueueTask(const SimulationArguments &args, const std::filesystem::path &houseFile, auto &algorithm) {
     std::unique_ptr<AbstractAlgorithm> algorithmInstance = nullptr;
@@ -223,7 +233,7 @@ void BatchVacuumSimulator::enqueueTask(const SimulationArguments &args, const st
     char *monitor = &threadStatuses.at(tasks.size());
     tasks.emplace_back(std::make_unique<Task>(
         std::thread(runSimulation, name, std::move(algorithmInstance),
-                    houseFile, std::ref(args), monitor, std::ref(summaryMutex)),
+                    houseFile, std::ref(args), monitor, std::ref(summaryMutex), std::ref(queueNotifier)),
         monitor));
    
 }
@@ -241,34 +251,32 @@ void BatchVacuumSimulator::waitAllTasks() {
   }
 }
 void BatchVacuumSimulator::run(const SimulationArguments &args) {
-  reserveHandles(args.getAlgorithmFiles());
-  auto numThreads = args.getNumThreads();
-  threadStatuses.insert(threadStatuses.begin(), numThreads, 0);
-  auto &algorithms = AlgorithmRegistrar::getAlgorithmRegistrar();
-  auto houseFiles = args.getHouseFiles();
+    
 
-  auto algorithm = algorithms.begin();
-  auto houseFile = houseFiles.begin();
-  auto houseFileBegin = houseFiles.begin();
-
-  while (algorithm != algorithms.end() && houseFile != houseFiles.end()) {
-    bool isFreeTask = removeCompletedTasks(numThreads, tasks);
-    if (!isFreeTask) {
-      continue;
+    reserveHandles(args.getAlgorithmFiles());
+    auto numThreads = args.getNumThreads();
+    threadStatuses.insert(threadStatuses.begin(), numThreads, 0);
+    auto &algorithms = AlgorithmRegistrar::getAlgorithmRegistrar();
+    auto houseFiles = args.getHouseFiles();
+    auto algorithm = algorithms.begin();
+    auto houseFile = houseFiles.begin();
+    auto houseFileBegin = houseFiles.begin();
+    
+    while (algorithm != algorithms.end() && houseFile != houseFiles.end()) {
+        waitForSpot(numThreads, tasks);
+        try{
+            enqueueTask(args, *houseFile, *algorithm);
+        }
+        catch(const factoryException& e)
+        {
+            writeErrorFile(*houseFile, e.what());
+            algorithm++;
+        }
+        if (++houseFile == houseFiles.end()) {
+            houseFile = houseFileBegin;
+            ++algorithm;
+        }
     }
-    try{
-        enqueueTask(args, *houseFile, *algorithm);
-    }
-    catch(const factoryException& e)
-    {
-        writeErrorFile(*houseFile, e.what());
-        algorithm++;
-    }
-    if (++houseFile == houseFiles.end()) {
-      houseFile = houseFileBegin;
-      ++algorithm;
-    }
-  }
-  waitAllTasks();
-  clearRun();
+    waitAllTasks();
+    clearRun();
 }
