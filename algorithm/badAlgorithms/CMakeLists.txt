@@ -38,24 +38,22 @@ add_library(
   throwsError SHARED
   ${PROJECT_SOURCE_DIR}/throwsError.cpp
 )
-
+set (BAD_LIB_DIR ${CMAKE_SOURCE_DIR}/../../badLib)
+file(MAKE_DIRECTORY ${BAD_LIB_DIR})
 set_target_properties(throwsError PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
 
 set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
 set_target_properties(empty PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badLib
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
 set_target_properties(throwsError PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
 
 set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
-)
-set_target_properties(empty PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )

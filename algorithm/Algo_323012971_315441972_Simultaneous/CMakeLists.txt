@@ -34,10 +34,15 @@ add_library(
   ${GRANDPARENT_DIR}/common/src/Coordinate.cpp
   ${GRANDPARENT_DIR}/common/src/HouseLocation.cpp
 )
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib)
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib)
+
 
 set_target_properties(Algo_323012971_315441972_Simultaneous PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../lib
 )
-set_target_properties(Algo_323012971_315441972_Simultaneous PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../../badAndGoodLib
+add_custom_command(TARGET Algo_323012971_315441972_Simultaneous POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:Algo_323012971_315441972_Simultaneous>
+    ${CMAKE_SOURCE_DIR}/../../badAndGoodLib/
 )

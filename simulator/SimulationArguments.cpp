@@ -38,14 +38,14 @@ SimulationArguments::SimulationArguments(int argc, char** argv)
 {
     std::string housePath;
     std::string algoPath;
-    uint8_t numThreads;
+    uint32_t numThreads;
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "produce help message")
         ("summary_only","create only summary csv file")
         ("house_path", po::value<std::string>(&housePath), "set house files path")
         ("algo_path", po::value<std::string>(&algoPath), "set algorithm files path")
-        ("num_threads", po::value<uint8_t>(&numThreads)->default_value(10), "set number of threads");
+        ("num_threads", po::value<uint32_t>(&numThreads)->default_value(10), "set number of threads");
 
     po::variables_map vm;
     try
@@ -74,9 +74,13 @@ SimulationArguments::SimulationArguments(int argc, char** argv)
     {
         throw std::invalid_argument("Invalid algorithm path: " + algoPath);
     }
+    if (numThreads == 0)
+    {
+        throw std::invalid_argument("Number of threads must be greater than 0");
+    }
     insertFilesWithExtension(housePath, houseFiles, ".house");
     insertFilesWithExtension(algoPath, algoFiles, ".so");
-    summaryOnly = vm.count("summary_only");
-    numThreads = vm["num_threads"].as<uint8_t>();
+    this->summaryOnly = vm.count("summary_only");
+    this->numThreads = numThreads;
 }
 
