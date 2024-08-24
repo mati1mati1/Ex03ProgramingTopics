@@ -57,6 +57,3 @@ set_target_properties(throwsError PROPERTIES
 set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
-set_target_properties(empty PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
-)

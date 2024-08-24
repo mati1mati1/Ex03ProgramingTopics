@@ -14,7 +14,7 @@ protected:
 };
 TEST_F(VacuumParserTest, ParseInvalidHouses)
 {
-    std::filesystem::path directoryPath = "../../badAndGoodLib/test/examples/failtests/";
+    std::filesystem::path directoryPath = "../test/examples/failtests/";
     ASSERT_TRUE(std::filesystem::exists(directoryPath));
     ASSERT_GT(std::filesystem::hard_link_count(directoryPath),0);
     for (const auto & entry : std::filesystem::directory_iterator(directoryPath))
