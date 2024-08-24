@@ -36,6 +36,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     googletest
     URL https://github.com/google/googletest/archive/34ad51b3dc4f922d8ab622491dd44fc2c39afee9.zip
   )
+  if(NOT DEFINED ROOT_DIR)
+    set(ROOT_DIR ${CMAKE_SOURCE_DIR} CACHE PATH "Root directory of the project")
+  endif()
   FetchContent_MakeAvailable(googletest)
   enable_testing()
   include(GoogleTest)
@@ -44,6 +47,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_executable(${test_name} ${ARGN})
     target_link_libraries(${test_name} GTest::gtest_main)
     gtest_discover_tests(${test_name})
+    target_compile_definitions(${test_name} PRIVATE ROOT_DIR="${ROOT_DIR}")
   endfunction()
 
   add_gtest_executable(
