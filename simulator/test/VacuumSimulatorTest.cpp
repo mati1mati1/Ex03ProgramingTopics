@@ -18,9 +18,9 @@ protected:
     void TearDown() override {
         std::filesystem::remove_all(testOutputDir);
     }
-    void writeOutFile(std::ofstream &writeStream, bool timedOut){
+    void writeOutFile(std::ofstream &writeStream){
         simulator->record = record;
-        simulator->writeOutFile(writeStream, timedOut);
+        simulator->writeOutFile(writeStream);
     }
 
     std::unique_ptr<VacuumSimulator> simulator;
@@ -41,7 +41,7 @@ TEST_F(VacuumSimulatorTest, WORKING) {
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream, false);
+    writeOutFile(writeStream);
     
     std::ifstream outFileRead(resultPath);
     ASSERT_TRUE(outFileRead.is_open());
@@ -87,7 +87,7 @@ TEST_F(VacuumSimulatorTest, DEAD) {
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream, false);
+    writeOutFile(writeStream);
 
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
@@ -128,7 +128,7 @@ TEST_F(VacuumSimulatorTest, WithoutStep) {
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream, false);
+    writeOutFile(writeStream);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);
@@ -183,7 +183,7 @@ TEST_F(VacuumSimulatorTest, FINISHED) {
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream, false);
+    writeOutFile(writeStream);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);
@@ -236,7 +236,8 @@ TEST_F(VacuumSimulatorTest, TIMEOUT) {
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream, true);
+    simulator->timeout();
+    writeOutFile(writeStream);
     ASSERT_TRUE(std::filesystem::exists(resultPath));
     
     std::ifstream outFileRead(resultPath);

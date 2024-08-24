@@ -71,7 +71,6 @@ void writeErrorFile(const std::filesystem::path& houseFile, const std::string& e
     writeErrorFile(houseFile,"",errorMessage);
 }
 
-
 void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> algorithm, const std::filesystem::path& houseFile,const SimulationArguments& args,std::mutex &summaryMutex, std::shared_ptr<std::counting_semaphore<>> semaphore)
 {
     VacuumSimulator simulator;
@@ -89,64 +88,65 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
     }
     auto maxTime = simulator.getMaxTime();
     boost::asio::steady_timer timer(context, maxTime);
-    bool isTimedOut = false;
+    std::atomic<bool> isTimedOut = false;
+    std::atomic<bool> error = false;
+    std::string errorMessage;
     std::future<void> simFuture = std::async(std::launch::async, [&]() {
         try {
-           
             simulator.setAlgorithm(std::move(algorithm));
-            simulator.run(name);
+            simulator.run();
             context.stop();
+            return;
         }
         catch (const std::invalid_argument& e) {
-            std::string errorMessage = "Error: Unable to parse House file: " + houseFile.stem().string() + e.what();
-            writeErrorFile(houseFile, errorMessage);
-            context.stop();
-
+            errorMessage = "Error: Unable to parse House file: " + houseFile.stem().string() + e.what();
+            error = true;
         }
         catch (const std::exception& e) {
-            std::string errorMessage = "Error: Simulator Error " + houseFile.stem().string() + e.what();
-            writeErrorFile(houseFile, errorMessage);
-            context.stop();
-
+            errorMessage = "Error: Simulator Error " + houseFile.stem().string() + e.what();
+            error = true;
         }
-
+        if(!isTimedOut)
+        {
+            context.stop();
+            writeErrorFile(houseFile, errorMessage);
+        }
     });
 
     timer.async_wait([&](const boost::system::error_code& ec) {
         if (!ec) {
-            simFuture.wait_for(std::chrono::seconds(0));
-            simFuture = {}; // effectively cancels the task
+            if (simFuture.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+                simulator.timeout();
+                isTimedOut = true;
+            }
             context.stop();
-            isTimedOut = true;
         }
     });
 
     context.run();
 
-    if (simFuture.valid())
+    if (!isTimedOut && simFuture.valid())
     {
-        /*
-            Thorws any expection that may have occured
-        */
         simFuture.get(); 
     }
-    try
+    if ( !error)
     {
+        try
         {
             std::lock_guard<std::mutex> lock(summaryMutex);
             if (!args.isSummaryOnly())
             {
-                simulator.exportRecord(isTimedOut);
+                simulator.exportRecord(name);
             }
-            simulator.exportSummary(isTimedOut);
+            simulator.exportSummary(name);
+        } 
+        catch (const std::exception& e)
+        {
+            std::string errorMessage = "Error: Unable to write output file: " + houseFile.stem().string() + e.what();
+            writeErrorFile(houseFile, errorMessage);
         }
-        
-    } 
-    catch (const std::exception& e)
-    {
-        std::string errorMessage = "Error: Unable to write output file: " + houseFile.stem().string() + e.what();
-        writeErrorFile(houseFile, errorMessage);
     }
+    
     semaphore->release();
 }
 

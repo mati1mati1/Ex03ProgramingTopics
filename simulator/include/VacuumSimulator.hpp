@@ -10,12 +10,13 @@ class VacuumSimulator : public Simulator
 {
 public:
     VacuumSimulator() {};
-    void run(std::string algorithmName) override;
+    void run() override;
     void setAlgorithm(std::unique_ptr<AbstractAlgorithm> algorithm);
     void readHouseFile(const std::filesystem::path &fileInputpath);
     auto getMaxTime() const { return payload->getMaxTime(); }
-    std::filesystem::path exportRecord(bool timedOut);
-    std::filesystem::path exportSummary(bool timedOut);
+    void timeout() { timedOut = true; };
+    std::filesystem::path exportRecord(std::string algorithmName);
+    std::filesystem::path exportSummary(std::string algorithmName);
     friend class SpecificAlgorithmTest;
     friend class VacuumSimulatorTest;
 private:
@@ -24,13 +25,13 @@ private:
     bool canRun() { return payload != nullptr && algorithm != nullptr; }
     void cleanCurrentLocation();
     void canExport();
-    void writeSummary(std::string houseName,std::filesystem::path outputPath,bool timedOut);
-    void writeOutFile(std::ofstream &writeStream,bool timedOut);
+    void writeSummary(std::string houseName,std::filesystem::path outputPath,std::string algorithmName);
+    void writeOutFile(std::ofstream &writeStream);
 
 private:
     std::shared_ptr<CleaningRecord> record = nullptr;
     std::unique_ptr<VacuumPayload> payload = nullptr;
     std::unique_ptr<AbstractAlgorithm> algorithm = nullptr;
     std::filesystem::path fileInputpath;
-    std::string algorithmName;
+    bool timedOut = false;
 };

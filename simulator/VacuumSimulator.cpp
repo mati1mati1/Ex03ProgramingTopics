@@ -18,11 +18,10 @@ const std::filesystem::path getSummaryFilePath()
 {
     return std::filesystem::current_path() / "summary.csv";
 }
-void VacuumSimulator::run(std::string algorithmName)
+void VacuumSimulator::run()
 {
-    auto record = calculate();
-    this->algorithmName = algorithmName;
-    this->record = record;
+    this->timedOut = false;
+    calculate();
     if (record == nullptr)
     {
         std::cerr << "run failed" << std::endl;
@@ -43,7 +42,7 @@ void VacuumSimulator::canExport()
     
 }
 
-std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
+std::filesystem::path VacuumSimulator::exportRecord(std::string algorithmName)
 {
     auto fileOutputpath = getOutFilePath(fileInputpath, algorithmName);
     std::ofstream writeStream(fileOutputpath);
@@ -53,16 +52,16 @@ std::filesystem::path VacuumSimulator::exportRecord(bool timedOut)
         std::cerr << "Unable to open file." << std::endl;    
         throw std::runtime_error("Unable to open file.");
     }
-    writeOutFile(writeStream,timedOut);
+    writeOutFile(writeStream);
     return fileOutputpath;
     
 }
-std::filesystem::path VacuumSimulator::exportSummary(bool timedOut)
+std::filesystem::path VacuumSimulator::exportSummary(std::string algorithmName)
 {
     auto fileOutputpath = getSummaryFilePath();
     std::string houseName = fileInputpath.stem().string();
     canExport();
-    writeSummary(houseName,fileOutputpath,timedOut);
+    writeSummary(houseName,fileOutputpath,algorithmName);
     return fileOutputpath;
 }
 std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
@@ -77,8 +76,8 @@ std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
     algorithm->setWallsSensor(runPayload.getHouse());
     algorithm->setDirtSensor(runPayload.getHouse());
     algorithm->setMaxSteps(runPayload.getMaxSteps());
-    auto record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay, runPayload.getBattery().getBatteryState(), runPayload.getHouse().getTotalDirt()), runPayload.getMaxSteps());
-    while (record->getMaxSteps() >= record->size())
+    record = std::make_shared<CleaningRecord>(CleaningRecordStep(LocationType::CHARGING_STATION, Step::Stay, runPayload.getBattery().getBatteryState(), runPayload.getHouse().getTotalDirt()), runPayload.getMaxSteps());
+    while (record->getMaxSteps() >= record->size() && !timedOut)
     {
         auto step = algorithm->nextStep();
         if (step == Step::Finish)
@@ -151,7 +150,7 @@ void VacuumSimulator::readHouseFile(const std::filesystem::path &fileInputpath)
     this->record = nullptr;
 }
 
-void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path,bool timedOut)
+void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path, std::string algorithmName)
 {
     std::ifstream inFile(path);
     std::ofstream outFile;
@@ -159,7 +158,7 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     std::vector<std::string> algorithmNames;
     std::vector<std::vector<std::string>> tableData;
     std::string line;
-    uint32_t score = VacuumScoreCalculator().calculateScore(record,timedOut);
+    uint32_t score = VacuumScoreCalculator().calculateScore(record, timedOut);
 
     if (inFile.is_open())
     {
@@ -269,7 +268,7 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
 }
 
 
-void VacuumSimulator::writeOutFile(std::ofstream &writeStream,bool timedOut)
+void VacuumSimulator::writeOutFile(std::ofstream &writeStream)
 {
     auto recordLast = record->last();
     auto inDock = recordLast->isAtDockingStation(); 
