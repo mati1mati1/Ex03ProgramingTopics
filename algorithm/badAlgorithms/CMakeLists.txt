@@ -31,29 +31,46 @@ add_library(
   ${PROJECT_SOURCE_DIR}/empty.cpp
 )
 add_library(
-  incorrectlyRegisterAlgorithm SHARED
-  ${PROJECT_SOURCE_DIR}/incorrectlyRegisterAlgorithm.cpp
+  faultyAlgorithm SHARED
+  ${PROJECT_SOURCE_DIR}/faultyAlgorithm.cpp
 )
 add_library(
-  throwsError SHARED
-  ${PROJECT_SOURCE_DIR}/throwsError.cpp
+  timingOut SHARED
+  ${PROJECT_SOURCE_DIR}/timingOut.cpp
 )
-set (BAD_LIB_DIR ${CMAKE_SOURCE_DIR}/../../badLib)
-file(MAKE_DIRECTORY ${BAD_LIB_DIR})
-set_target_properties(throwsError PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
+add_library(
+  timingOutSometimes SHARED
+  ${PROJECT_SOURCE_DIR}/timingOutSometimes.cpp
+)
+add_library(
+  timingOutSometimesFaultySometimes SHARED
+  ${PROJECT_SOURCE_DIR}/timingOutSometimesFaultySometimes.cpp
 )
 
-set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
-)
+set (BAD_LIB_DIR ${CMAKE_SOURCE_DIR}/../../badLib)
+set (BAD_TIMEOUT_DIR ${CMAKE_SOURCE_DIR}/../../runtimeBadLib)
+set (BAD_SOMETIMETIMEOUT_DIR ${CMAKE_SOURCE_DIR}/../../sometimetimeout)
+set (SEMI_FAULTY_DIR ${CMAKE_SOURCE_DIR}/../../semifaultyAlgorithms)
+set (BAD_TIMEOUTFAULTY_DIR ${CMAKE_SOURCE_DIR}/../../timeoutfaultyAlgorithms)
+file(MAKE_DIRECTORY ${BAD_LIB_DIR})
+file(MAKE_DIRECTORY ${BAD_TIMEOUT_DIR})
+file(MAKE_DIRECTORY ${BAD_SOMETIMETIMEOUT_DIR})
+file(MAKE_DIRECTORY ${SEMI_FAULTY_DIR})
+file(MAKE_DIRECTORY ${BAD_TIMEOUTFAULTY_DIR})
+
+
 set_target_properties(empty PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
 )
-set_target_properties(throwsError PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
+set_target_properties(faultyAlgorithm PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${SEMI_FAULTY_DIR}
 )
-
-set_target_properties(incorrectlyRegisterAlgorithm PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
+set_target_properties(timingOut PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_TIMEOUT_DIR}
+)
+set_target_properties(timingOutSometimes PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_SOMETIMETIMEOUT_DIR}
+)
+set_target_properties(timingOutSometimesFaultySometimes PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${BAD_TIMEOUTFAULTY_DIR}
 )
