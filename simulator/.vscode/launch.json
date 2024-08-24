@@ -18,7 +18,7 @@
             "args": [
                 "-house_path=/home/arels/Ex03ProgramingTopics/simulator/test/examples/cleaningTest",
                 "-algo_path=/home/arels/Ex03ProgramingTopics/badAndGoodLib",
-                "-num_threads=5"
+                "-num_threads=10"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

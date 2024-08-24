@@ -17,8 +17,19 @@
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <dlfcn.h>
-#include <queue>
 
+class factoryException : public std::exception
+{
+    public:
+        factoryException(const std::string& message) : message(message) {}
+        const char* what() const noexcept override
+        {
+            return message.c_str();
+        }
+    private:
+        std::string message;
+};
+void writeErrorFile(const std::filesystem::path& houseFile,const std::string& algorithmName, const std::string& errorMessage);
 void writeErrorFile(const std::string& algorithmName, const std::string& errorMessage);
 std::filesystem::path getErrorPathFile(const std::filesystem::path& houseFile, const std::string& algorithmName ) {
     constexpr std::string_view errorExtension = ".error";
@@ -61,8 +72,7 @@ void writeErrorFile(const std::filesystem::path& houseFile, const std::string& e
 }
 
 
-void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> algorithm, const std::filesystem::path& houseFile,
-    const SimulationArguments& args,std::mutex &summaryMutex)
+void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> algorithm, const std::filesystem::path& houseFile,const SimulationArguments& args,std::mutex &summaryMutex, std::shared_ptr<std::counting_semaphore<>> semaphore)
 {
     VacuumSimulator simulator;
     boost::asio::io_context context;
@@ -74,6 +84,7 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
     {
         std::string errorMessage = "Error: Unable to read House file: " + houseFile.stem().string() + e.what();
         writeErrorFile(houseFile, errorMessage);
+        semaphore->release();
         return;
     }
     auto maxTime = simulator.getMaxTime();
@@ -90,12 +101,15 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
             std::string errorMessage = "Error: Unable to parse House file: " + houseFile.stem().string() + e.what();
             writeErrorFile(houseFile, errorMessage);
             context.stop();
+
         }
         catch (const std::exception& e) {
             std::string errorMessage = "Error: Simulator Error " + houseFile.stem().string() + e.what();
             writeErrorFile(houseFile, errorMessage);
             context.stop();
+
         }
+
     });
 
     timer.async_wait([&](const boost::system::error_code& ec) {
@@ -133,6 +147,7 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
         std::string errorMessage = "Error: Unable to write output file: " + houseFile.stem().string() + e.what();
         writeErrorFile(houseFile, errorMessage);
     }
+    semaphore->release();
 }
 
 
@@ -178,85 +193,53 @@ BatchVacuumSimulator::~BatchVacuumSimulator()
     clearHandles();
 }
 
-
-class ThreadPool {
-public:
-    ThreadPool(size_t numThreads);
-    ~ThreadPool();
-
-    void enqueue(std::function<void()> job);
-
-private:
-    std::vector<std::thread> workers;
-    std::queue<std::function<void()>> jobs;
-    std::mutex queueMutex;
-    std::condition_variable condition;
-    std::atomic<bool> stop;
-
-    void workerThread();
-};
-
-ThreadPool::ThreadPool(size_t numThreads) : stop(false) {
-    for (size_t i = 0; i < numThreads; ++i) {
-        workers.emplace_back([this] { workerThread(); });
-    }
-}
-
-ThreadPool::~ThreadPool() {
-    stop = true;
-    condition.notify_all();
-    for (std::thread &worker : workers) {
-        worker.join();
-    }
-}
-
-void ThreadPool::enqueue(std::function<void()> job) {
+void BatchVacuumSimulator::enqueueTask(const SimulationArguments &args, const std::filesystem::path &houseFile, auto &algorithm) {
+    std::unique_ptr<AbstractAlgorithm> algorithmInstance = nullptr;
+    std::string name;
+    try{
+        name = algorithm.name();
+        algorithmInstance = algorithm.create();
+    }catch(const std::exception& e)
     {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        jobs.push(std::move(job));
+        throw factoryException("Error: Algorithm supplied is invalid factory of name cannot be resolved " + name + e.what());
     }
-    condition.notify_one();
+    threadPool.emplace_back(runSimulation, name, std::move(algorithmInstance),
+                    houseFile, std::ref(args),std::ref(summaryMutex), semaphore);
 }
 
-void ThreadPool::workerThread() {
-    while (true) {
-        std::function<void()> job;
-        {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            condition.wait(lock, [this] { return stop || !jobs.empty(); });
-            if (stop && jobs.empty()) {
-                return;
-            }
-            job = std::move(jobs.front());
-            jobs.pop();
-        }
-        job();
-    }
-}
 
 void BatchVacuumSimulator::run(const SimulationArguments &args) {
     reserveHandles(args.getAlgorithmFiles());
-    //auto numThreads = args.getNumThreads();
-    //ThreadPool threadPool(numThreads);
+    auto numThreads = args.getNumThreads();
+    auto &algorithms = AlgorithmRegistrar::getAlgorithmRegistrar();
+    auto houseFiles = args.getHouseFiles();
+    semaphore = std::make_shared<std::counting_semaphore<>>(numThreads);
+    auto algorithm = algorithms.begin();
+    auto houseFile = houseFiles.begin();
+    auto houseFileBegin = houseFiles.begin();
     
-    auto algorithms = AlgorithmRegistrar::getAlgorithmRegistrar();
-   // auto houseFiles = args.getHouseFiles();
-    
-    /*for (auto algorithm = algorithms.begin(); algorithm != algorithms.end(); ++algorithm) {
-        for (auto houseFile = houseFiles.begin(); houseFile != houseFiles.end(); ++houseFile) {
-            threadPool.enqueue([&]() {
-                // std::unique_ptr<AbstractAlgorithm> algorithmInstance = nullptr;
-                // std::string name;
-                // try {
-                //     name = algo->name();
-                //     algorithmInstance = algo->create();
-                //     runSimulation(name, std::move(algorithmInstance), house, args, std::ref(summaryMutex));
-                // } catch (const std::exception &e) {
-                //     writeErrorFile(house, e.what());
-                // }
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            });
+    while (algorithm != algorithms.end() && houseFile != houseFiles.end()) {
+        semaphore->acquire();
+        try{
+            enqueueTask(args, *houseFile, *algorithm);
         }
-    }*/
+        catch(const factoryException& e)
+        {
+            writeErrorFile(*houseFile, e.what());
+            algorithm++;
+
+        }
+        if (++houseFile == houseFiles.end()) {
+            houseFile = houseFileBegin;
+            ++algorithm;
+        }
+    }
+    for (auto &thread: threadPool) {
+        if (thread.joinable()) {
+            thread.join();
+        }
+    }
+    threadPool.clear();
+    AlgorithmRegistrar::getAlgorithmRegistrar().clear();
     clearHandles();
 }
