@@ -18,7 +18,7 @@ protected:
         auto algorithm = AlgorithmRegistrar::getAlgorithmRegistrar().begin()->create();
         simulator.setAlgorithm(std::move(algorithm));
         simulator.readHouseFile(inputfile);
-        simulator.run(algoName);
+        simulator.run();
         record = simulator.record;
         ASSERT_EQ(record->last()->getLocationType(), LocationType::CHARGING_STATION);
         auto indecies = record->size();
@@ -33,7 +33,7 @@ protected:
     {
         if (!testing::Test::HasFailure())
         {
-            auto path = simulator.exportRecord(false);
+            auto path = simulator.exportRecord(algoName);
             auto gtPath = gt / (filename + "-" + algoName + ".txt");
             std::filesystem::copy(path, gtPath, std::filesystem::copy_options::overwrite_existing);
         }

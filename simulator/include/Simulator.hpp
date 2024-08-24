@@ -3,5 +3,5 @@
 class Simulator{
     public:
         virtual ~Simulator() = default;
-        virtual void run(std::string name) = 0;
+        virtual void run() = 0;
 };
