@@ -193,16 +193,16 @@ protected:
     std::vector<std::filesystem::path> algoFiles;
     public:
         inline static const fs::path LIBPATH = "../../lib";
-        inline static const fs::path CLEANINGTEST = "../test/examples/cleaningTest";
-        inline static const fs::path MIXFAILERANDSUCCESHOUSE = "../test/examples/mixFailerAndSuccesHouse";
-        inline static const fs::path FAILTESTS = "../test/examples/failtests";
+        inline static const fs::path CLEANINGTEST = "../../simulator/test/examples/cleaningTest";
+        inline static const fs::path MIXFAILERANDSUCCESHOUSE = "../../simulator/test/examples/mixFailerAndSuccesHouse";
+        inline static const fs::path FAILTESTS = "../../simulator/test/examples/failtests";
         inline static const fs::path BADLIB = "../../badLib";
         inline static const fs::path RUNTIMEBADLIB = "../../runtimeBadLib";
         inline static const fs::path BADANDGOODLIB = "../../badAndGoodLib";
         inline static const fs::path TIMEOUTFAULTYALGORITHMS = "../../timeoutfaultyAlgorithms";
         inline static const fs::path LIBFAULTY = "../../semifaultyAlgorithms";
         inline static const fs::path SOMETIMESTIMEOUTLIB = "../../sometimetimeout";
-        inline static const fs::path TIMEOUTTEST = "../test/examples/timeoutTests";
+        inline static const fs::path TIMEOUTTEST = "../../simulator/test/examples/timeoutTests";
 };
 
 
