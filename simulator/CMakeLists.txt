@@ -22,7 +22,7 @@ set(BOOST_ENABLE_CMAKE ON)
 include(FetchContent)
 FetchContent_Declare(
     Boost
-    URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.7z 
+    URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.zip 
     USES_TERMINAL_DOWNLOAD TRUE 
     GIT_PROGRESS TRUE   
     DOWNLOAD_NO_EXTRACT FALSE
