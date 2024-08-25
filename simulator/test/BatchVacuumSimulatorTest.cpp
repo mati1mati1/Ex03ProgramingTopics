@@ -11,6 +11,7 @@ struct TestParams {
     fs::path housePath;
     fs::path algoPath;
     bool summaryOnly;
+    bool shouldCsv;
     std::vector<std::string> validAlgorithms;
 };
 class BatchVacuumSimulatorTest : public ::testing::Test {
@@ -96,10 +97,15 @@ protected:
             SimulationArguments args(argc, const_cast<char**>(argv.data()));
             BatchVacuumSimulator simulator;
             simulator.run(args);
-        });
-        isCSVRectangular("summary.csv");
+        });        
         insertFilesWithExtension(params.housePath, houseFiles, ".house");
         insertFilesWithExtension(params.algoPath, algoFiles, ".so");
+        if(params.shouldCsv) {
+            ASSERT_TRUE(isCSVRectangular("summary.csv"));
+        }
+        else {
+            ASSERT_FALSE(fileExists("summary.csv"));
+        }
         assertNotBothErrorAndOutput();
     }
     double timedOutRatio(const TestParams& params)
@@ -142,22 +148,27 @@ protected:
         bool isTimeout = line.find("WORKING") != std::string::npos || line.find("DEAD") != std::string::npos;
         return isTimeout;
     }
+    std::string getOutputFileErrorName(const std::filesystem::path& houseFile)
+    {
+        std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";
+        return houseErrorFile;
+    }
     void assertNotBothErrorAndOutput()
     {
         for (const auto& houseFile : houseFiles) {
-            std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";
+            std::string houseErrorFile = getOutputFileErrorName(houseFile);
             std::string houseFileName = houseFile.filename().string();
             ASSERT_FALSE(fileExists(houseErrorFile) && fileExists(houseFileName)) << "Both error and output files exist for " << houseFile;
         }
         for (const auto& algoFile : algoFiles) {
-            std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";
+            std::string algoErrorFile =getOutputFileErrorName(algoFile);
             ASSERT_FALSE(fileExists(algoErrorFile) && fileExists(algoFile.filename())) << "Both error and output files exist for " << algoFile;
         }
     }
     void assertCorrectErrorFilesCreated(const TestParams& params)
     {
         for (const auto& houseFile : houseFiles) {
-            std::string houseErrorFile = fs::path(houseFile.stem().string()).string() + ".error";
+            std::string houseErrorFile = getOutputFileErrorName(houseFile);
             bool isFailedHouse = houseFile.stem().string().find("failed") != std::string::npos;
 
             if (isFailedHouse) {
@@ -179,7 +190,7 @@ protected:
     void assertCorrectAlgorithmErrorFilesCreated(const TestParams& params)
     {
         for (const auto& algoFile : algoFiles) {
-            std::string algoErrorFile = fs::path(algoFile.stem().string()).string() + ".error";
+            std::string algoErrorFile = getOutputFileErrorName(algoFile);
             bool isValidAlgo = std::find(params.validAlgorithms.begin(), params.validAlgorithms.end(), fs::path(algoFile).stem().string()) != params.validAlgorithms.end();
 
             if (!isValidAlgo) {
@@ -221,17 +232,17 @@ INSTANTIATE_TEST_SUITE_P(
     BatchVacuumSimulatorTests,
     BatchVacuumSimulatorParameterizedTest,
     ::testing::Values(
-        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::LIBPATH, false, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
-        TestParams{BatchVacuumSimulatorTest::MIXFAILERANDSUCCESHOUSE, BatchVacuumSimulatorTest::LIBPATH, false, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
-        TestParams{BatchVacuumSimulatorTest::FAILTESTS, BatchVacuumSimulatorTest::LIBPATH, false, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
-        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::LIBPATH, true, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
-        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::BADLIB, true, {}},
-        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::BADANDGOODLIB, false, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}}
+        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::LIBPATH, false,true, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
+        TestParams{BatchVacuumSimulatorTest::MIXFAILERANDSUCCESHOUSE, BatchVacuumSimulatorTest::LIBPATH, false,true, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
+        TestParams{BatchVacuumSimulatorTest::FAILTESTS, BatchVacuumSimulatorTest::LIBPATH, false,false, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
+        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::LIBPATH, true,true, {"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}},
+        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::BADLIB, true,false, {}},
+        TestParams{BatchVacuumSimulatorTest::CLEANINGTEST, BatchVacuumSimulatorTest::BADANDGOODLIB, false, true,{"libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}}
     )
 );
 
 TEST_F(BatchVacuumSimulatorTest, RunSimulationWithRuntimeError) {
-    const auto& params = TestParams{TIMEOUTTEST, RUNTIMEBADLIB, false, {"libtimingOut"}};
+    const auto& params = TestParams{TIMEOUTTEST, RUNTIMEBADLIB, false, true,{"libtimingOut"}};
     loadRun(params);
     assertCorrectAlgorithmErrorFilesCreated(params);
     ASSERT_EQ(timedOutRatio(params), 1.0);
@@ -239,7 +250,7 @@ TEST_F(BatchVacuumSimulatorTest, RunSimulationWithRuntimeError) {
 
 
 TEST_F(BatchVacuumSimulatorTest, RunSimulationWithSometimesTimeoutMultipleAlgorithms) {
-    const auto& params = TestParams{TIMEOUTTEST, SOMETIMESTIMEOUTLIB, false, {"libtimingOutSometimes"}};
+    const auto& params = TestParams{TIMEOUTTEST, SOMETIMESTIMEOUTLIB, false,true, {"libtimingOutSometimes"}};
     loadRun(params);
     assertCorrectAlgorithmErrorFilesCreated(params);
     ASSERT_LT(timedOutRatio(params), 1);
@@ -247,13 +258,13 @@ TEST_F(BatchVacuumSimulatorTest, RunSimulationWithSometimesTimeoutMultipleAlgori
 
 }
 TEST_F(BatchVacuumSimulatorTest, FaultyRuntimeAlgorithm) {
-    const auto& params = TestParams{ CLEANINGTEST,LIBFAULTY, false, {"libfaultyAlgorithm"}};
+    const auto& params = TestParams{ CLEANINGTEST,LIBFAULTY, false,true, {"libfaultyAlgorithm"}};
     loadRun(params);
     assertCorrectAlgorithmErrorFilesCreated(params);
     ASSERT_EQ(erroredOutFileRatio(params), 1.0);
 }
 TEST_F(BatchVacuumSimulatorTest, RunTimeFaultyOrTimeoutOrGoodAlgorithm) {
-    const auto& params = TestParams{ TIMEOUTTEST,TIMEOUTFAULTYALGORITHMS, false, {"libtimingOutSometimesFaultySometimes"}};
+    const auto& params = TestParams{ TIMEOUTTEST,TIMEOUTFAULTYALGORITHMS, false, true,{"libtimingOutSometimesFaultySometimes"}};
     loadRun(params);
     assertCorrectAlgorithmErrorFilesCreated(params);
     ASSERT_LT(timedOutRatio(params), 1);
