@@ -200,7 +200,7 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
                     }
                 }
 
-                if (hasData) // Only add rows that contain data
+                if (hasData)
                 {
                     algorithmNames.push_back(rowData[0]);
                     tableData.push_back(rowData);
@@ -233,7 +233,7 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     {
         algorithmNames.push_back(algorithmName);
         tableData.push_back(std::vector<std::string>(houseNames.size() + 1, "")); 
-        tableData.back()[0] = algorithmName; // Set the algorithm name in the new row
+        tableData.back()[0] = algorithmName; 
         algoIndex = tableData.size() - 1;
     }
 
@@ -246,18 +246,16 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     }
     if (tableData[algoIndex].size() <= houseIndex + 1)
     {
-        tableData[algoIndex].resize(houseIndex + 2, ""); // Resize the vector to ensure it can hold the new score
+        tableData[algoIndex].resize(houseIndex + 2, ""); 
     }
 
     tableData[algoIndex][houseIndex+1] = scoreStr;
 
 
-    // Open the file in truncate mode to overwrite with updated data
     outFile.open(path, std::ios_base::out | std::ios_base::trunc);
 
     if (outFile.is_open())
     {
-        // Write the header row (houses)
         houseNames.insert(houseNames.begin(), "");
         for (const auto &house : houseNames)
         {
@@ -265,7 +263,6 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
         }
         outFile << "\n";
 
-        // Write each algorithm's scores
         for (const auto &row : tableData)
         {
             for (const auto &cell : row)
