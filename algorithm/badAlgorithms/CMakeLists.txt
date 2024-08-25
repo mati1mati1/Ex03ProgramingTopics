@@ -15,7 +15,7 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Werror -pedantic")
 endif()
 
-set(DCMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} DIRECTORY)
 set(COMMON_ALGORITHM_DIR ${PARENT_DIR}/commonAlgorithm/)
@@ -47,20 +47,22 @@ add_library(
   ${PROJECT_SOURCE_DIR}/timingOutSometimesFaultySometimes.cpp
 )
 
-set (BAD_LIB_DIR ${CMAKE_SOURCE_DIR}/../../badLib)
-set (BAD_TIMEOUT_DIR ${CMAKE_SOURCE_DIR}/../../runtimeBadLib)
-set (BAD_SOMETIMETIMEOUT_DIR ${CMAKE_SOURCE_DIR}/../../sometimetimeout)
-set (SEMI_FAULTY_DIR ${CMAKE_SOURCE_DIR}/../../semifaultyAlgorithms)
-set (BAD_TIMEOUTFAULTY_DIR ${CMAKE_SOURCE_DIR}/../../timeoutfaultyAlgorithms)
+set(BAD_LIB_DIR ${CMAKE_SOURCE_DIR}/badLib)
+set(LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
+set(BAD_TIMEOUT_DIR ${CMAKE_SOURCE_DIR}/runtimeBadLib)
+set(BAD_SOMETIMETIMEOUT_DIR ${CMAKE_SOURCE_DIR}/sometimetimeout)
+set(SEMI_FAULTY_DIR ${CMAKE_SOURCE_DIR}/semifaultyAlgorithms)
+set(BAD_TIMEOUTFAULTY_DIR ${CMAKE_SOURCE_DIR}/timeoutfaultyAlgorithms)
+
+file(MAKE_DIRECTORY ${LIB_DIR})
 file(MAKE_DIRECTORY ${BAD_LIB_DIR})
 file(MAKE_DIRECTORY ${BAD_TIMEOUT_DIR})
 file(MAKE_DIRECTORY ${BAD_SOMETIMETIMEOUT_DIR})
 file(MAKE_DIRECTORY ${SEMI_FAULTY_DIR})
 file(MAKE_DIRECTORY ${BAD_TIMEOUTFAULTY_DIR})
 
-
 set_target_properties(empty PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${BAD_LIB_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${LIB_DIR}
 )
 set_target_properties(faultyAlgorithm PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${SEMI_FAULTY_DIR}
@@ -73,4 +75,9 @@ set_target_properties(timingOutSometimes PROPERTIES
 )
 set_target_properties(timingOutSometimesFaultySometimes PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${BAD_TIMEOUTFAULTY_DIR}
+)
+add_custom_command(TARGET empty POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:empty>
+    ${BAD_LIB_DIR}/
 )

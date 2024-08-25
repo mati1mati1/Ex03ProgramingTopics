@@ -56,12 +56,12 @@ std::filesystem::path VacuumSimulator::exportRecord(std::string algorithmName)
     return fileOutputpath;
     
 }
-std::filesystem::path VacuumSimulator::exportSummary(std::string algorithmName)
+std::filesystem::path VacuumSimulator::exportSummary(std::string algorithmName,bool errored)
 {
     auto fileOutputpath = getSummaryFilePath();
     std::string houseName = fileInputpath.stem().string();
     canExport();
-    writeSummary(houseName,fileOutputpath,algorithmName);
+    writeSummary(houseName,fileOutputpath,algorithmName,errored);
     return fileOutputpath;
 }
 std::shared_ptr<CleaningRecord> VacuumSimulator::calculate()
@@ -150,7 +150,7 @@ void VacuumSimulator::readHouseFile(const std::filesystem::path &fileInputpath)
     this->record = nullptr;
 }
 
-void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path, std::string algorithmName)
+void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path path, std::string algorithmName,bool errored)
 {
     std::ifstream inFile(path);
     std::ofstream outFile;
@@ -158,7 +158,14 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     std::vector<std::string> algorithmNames;
     std::vector<std::vector<std::string>> tableData;
     std::string line;
-    uint32_t score = VacuumScoreCalculator().calculateScore(record, timedOut);
+
+    uint32_t score;
+    if(errored){
+        score = UINT32_MAX;
+    }
+    else{
+        score = VacuumScoreCalculator().calculateScore(record, timedOut);
+    }
 
     if (inFile.is_open())
     {
@@ -231,7 +238,12 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     }
 
     size_t houseIndex = std::distance(houseNames.begin(), std::find(houseNames.begin(), houseNames.end(), houseName));
+
     std::string scoreStr = std::to_string(score);
+    if (errored)
+    {
+        scoreStr = "";
+    }
     if (tableData[algoIndex].size() <= houseIndex + 1)
     {
         tableData[algoIndex].push_back(scoreStr);

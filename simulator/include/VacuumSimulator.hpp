@@ -16,7 +16,7 @@ public:
     auto getMaxTime() const { return payload->getMaxTime(); }
     void timeout() { timedOut = true; };
     std::filesystem::path exportRecord(std::string algorithmName);
-    std::filesystem::path exportSummary(std::string algorithmName);
+    std::filesystem::path exportSummary(std::string algorithmName,bool errored);
     friend class SpecificAlgorithmTest;
     friend class VacuumSimulatorTest;
 private:
@@ -25,7 +25,7 @@ private:
     bool canRun() { return payload != nullptr && algorithm != nullptr; }
     void cleanCurrentLocation();
     void canExport();
-    void writeSummary(std::string houseName,std::filesystem::path outputPath,std::string algorithmName);
+    void writeSummary(std::string houseName,std::filesystem::path outputPath,std::string algorithmName,bool errored);
     void writeOutFile(std::ofstream &writeStream);
 
 private:

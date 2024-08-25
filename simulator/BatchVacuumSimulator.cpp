@@ -129,23 +129,25 @@ void runSimulation(const std::string name, std::unique_ptr<AbstractAlgorithm> al
     {
         simFuture.get(); 
     }
-    if ( !error)
+    
+    try
     {
-        try
+        std::lock_guard<std::mutex> lock(summaryMutex);
+        if (!error)
         {
-            std::lock_guard<std::mutex> lock(summaryMutex);
             if (!args.isSummaryOnly())
             {
                 simulator.exportRecord(name);
             }
-            simulator.exportSummary(name);
-        } 
-        catch (const std::exception& e)
-        {
-            std::string errorMessage = "Error: Unable to write output file: " + houseFile.stem().string() + e.what();
-            writeErrorFile(houseFile, errorMessage);
         }
+        simulator.exportSummary(name,error);
+    } 
+    catch (const std::exception& e)
+    {
+        std::string errorMessage = "Error: Unable to write output file: " + houseFile.stem().string() + e.what();
+        writeErrorFile(houseFile, errorMessage);
     }
+    
     
     semaphore->release();
 }
