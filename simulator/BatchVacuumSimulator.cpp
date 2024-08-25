@@ -208,7 +208,17 @@ void BatchVacuumSimulator::enqueueTask(const SimulationArguments &args, const st
     threadPool.emplace_back(runSimulation, name, std::move(algorithmInstance),
                     houseFile, std::ref(args),std::ref(summaryMutex), semaphore);
 }
-
+void BatchVacuumSimulator::discardFinishedThreads()
+{
+    threadPool.erase(std::remove_if(threadPool.begin(), threadPool.end(), [](std::thread &thread) {
+        if (thread.joinable())
+        {
+            return false;
+        }
+        return true;
+    }), threadPool.end());
+    
+}
 
 void BatchVacuumSimulator::run(const SimulationArguments &args) {
     reserveHandles(args.getAlgorithmFiles());
@@ -222,6 +232,7 @@ void BatchVacuumSimulator::run(const SimulationArguments &args) {
     
     while (algorithm != algorithms.end() && houseFile != houseFiles.end()) {
         semaphore->acquire();
+        discardFinishedThreads();
         try{
             enqueueTask(args, *houseFile, *algorithm);
         }

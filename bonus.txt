@@ -1,0 +1,12 @@
+We have already asked for bonus for gtest testing but it much more extensive now.
+    - Parameterized ETE testing
+    - Faulty algorithm testing
+        - Timeout
+        - Faulty
+        - Faulty registration
+        - Sometimes timeout sometimes faulty
+        - Random testing
+    - Timeout testing
+    - Out file validity testing
+    - more
+All tests are in the simulator/test directory which includes loads of examples of different scenarios, and many Unit and ETE testings

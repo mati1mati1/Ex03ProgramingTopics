@@ -32,7 +32,9 @@ class BatchVacuumSimulator
     private:
         void reserveHandles(const std::vector<std::filesystem::path> & algorithmFiles);
         void enqueueTask(const SimulationArguments &args, const std::filesystem::path &houseFile, auto &algorithm);
+        void discardFinishedThreads();
         void clearHandles();
+
     private:
         std::vector<std::unique_ptr<Task>> tasks;
         std::vector<std::thread> threadPool;
