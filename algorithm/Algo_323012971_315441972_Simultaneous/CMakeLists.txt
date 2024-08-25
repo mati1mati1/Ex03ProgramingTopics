@@ -43,10 +43,15 @@ set_target_properties(Algo_323012971_315441972_Simultaneous PROPERTIES
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
   file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/badAndGoodLib)
-
+  file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/allLib)
   add_custom_command(TARGET Algo_323012971_315441972_Simultaneous POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy
       $<TARGET_FILE:Algo_323012971_315441972_Simultaneous>
       ${CMAKE_SOURCE_DIR}/badAndGoodLib/
+  )
+  add_custom_command(TARGET Algo_323012971_315441972_Simultaneous POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+      $<TARGET_FILE:Algo_323012971_315441972_Simultaneous>
+      ${CMAKE_SOURCE_DIR}/allLib/
   )
 endif()

@@ -246,12 +246,11 @@ void VacuumSimulator::writeSummary(std::string houseName, std::filesystem::path 
     }
     if (tableData[algoIndex].size() <= houseIndex + 1)
     {
-        tableData[algoIndex].push_back(scoreStr);
+        tableData[algoIndex].resize(houseIndex + 2, ""); // Resize the vector to ensure it can hold the new score
     }
-    else
-    {
-        tableData[algoIndex][houseIndex+1] = scoreStr;
-    }
+
+    tableData[algoIndex][houseIndex+1] = scoreStr;
+
 
     // Open the file in truncate mode to overwrite with updated data
     outFile.open(path, std::ios_base::out | std::ios_base::trunc);

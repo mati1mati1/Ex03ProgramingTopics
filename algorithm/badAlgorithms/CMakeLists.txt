@@ -53,6 +53,7 @@ set(BAD_TIMEOUT_DIR ${CMAKE_SOURCE_DIR}/runtimeBadLib)
 set(BAD_SOMETIMETIMEOUT_DIR ${CMAKE_SOURCE_DIR}/sometimetimeout)
 set(SEMI_FAULTY_DIR ${CMAKE_SOURCE_DIR}/semifaultyAlgorithms)
 set(BAD_TIMEOUTFAULTY_DIR ${CMAKE_SOURCE_DIR}/timeoutfaultyAlgorithms)
+set(ALL_LIB_DIR ${CMAKE_SOURCE_DIR}/allLib)
 
 file(MAKE_DIRECTORY ${LIB_DIR})
 file(MAKE_DIRECTORY ${BAD_LIB_DIR})
@@ -60,6 +61,7 @@ file(MAKE_DIRECTORY ${BAD_TIMEOUT_DIR})
 file(MAKE_DIRECTORY ${BAD_SOMETIMETIMEOUT_DIR})
 file(MAKE_DIRECTORY ${SEMI_FAULTY_DIR})
 file(MAKE_DIRECTORY ${BAD_TIMEOUTFAULTY_DIR})
+file(MAKE_DIRECTORY ${ALL_LIB_DIR})
 
 set_target_properties(empty PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${LIB_DIR}
@@ -80,4 +82,29 @@ add_custom_command(TARGET empty POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:empty>
     ${BAD_LIB_DIR}/
+)
+add_custom_command(TARGET empty POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:empty>
+    ${ALL_LIB_DIR}/
+)
+add_custom_command(TARGET faultyAlgorithm POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:faultyAlgorithm>
+    ${ALL_LIB_DIR}/
+)
+add_custom_command(TARGET timingOut POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:timingOut>
+    ${ALL_LIB_DIR}/
+)
+add_custom_command(TARGET timingOutSometimes POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:timingOutSometimes>
+    ${ALL_LIB_DIR}/
+)
+add_custom_command(TARGET timingOutSometimesFaultySometimes POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE:timingOutSometimesFaultySometimes>
+    ${ALL_LIB_DIR}/
 )

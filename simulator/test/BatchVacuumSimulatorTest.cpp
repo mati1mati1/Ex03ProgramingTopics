@@ -204,6 +204,7 @@ protected:
     std::vector<std::filesystem::path> algoFiles;
     public:
         inline static const fs::path LIBPATH = "../../lib";
+        inline static const fs::path ALLLIBS = "../../allLib";
         inline static const fs::path CLEANINGTEST = "../../simulator/test/examples/cleaningTest";
         inline static const fs::path MIXFAILERANDSUCCESHOUSE = "../../simulator/test/examples/mixFailerAndSuccesHouse";
         inline static const fs::path FAILTESTS = "../../simulator/test/examples/failtests";
@@ -271,4 +272,16 @@ TEST_F(BatchVacuumSimulatorTest, RunTimeFaultyOrTimeoutOrGoodAlgorithm) {
     ASSERT_GT(timedOutRatio(params), 0);
     ASSERT_LT(erroredOutFileRatio(params), 1);
     ASSERT_GT(erroredOutFileRatio(params), 0);
+}
+TEST_F(BatchVacuumSimulatorTest, AllAlgorithmsMixedResults)
+{
+    const auto& params = TestParams{ MIXFAILERANDSUCCESHOUSE,ALLLIBS, false, true,
+    {"libtimingOutSometimesFaultySometimes","libtimingOut","libtimingOutSometimes","libfaultyAlgorithm","libAlgo_323012971_315441972_Simultaneous", "libAlgo_323012971_315441972_Orignal"}};
+    loadRun(params);
+    assertCorrectAlgorithmErrorFilesCreated(params);
+    ASSERT_LT(timedOutRatio(params), 1);
+    ASSERT_GT(timedOutRatio(params), 0);
+    ASSERT_LT(erroredOutFileRatio(params), 1);
+    ASSERT_GT(erroredOutFileRatio(params), 0);
+    
 }
