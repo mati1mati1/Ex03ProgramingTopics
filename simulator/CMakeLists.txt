@@ -150,7 +150,7 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Werror -pedantic -rdynamic")
 endif()
 
-add_executable(Simulator 
+add_executable(myrobot 
   ${PROJECT_SOURCE_DIR}/main.cpp
   ${PROJECT_SOURCE_DIR}/CleaningRecord.cpp
   ${PROJECT_SOURCE_DIR}/CleaningRecordStep.cpp
@@ -165,5 +165,5 @@ add_executable(Simulator
   ${PROJECT_SOURCE_DIR}/BatchVacuumSimulator.cpp
 )
 
-target_link_libraries(Simulator PRIVATE Boost::filesystem
+target_link_libraries(myrobot PRIVATE Boost::filesystem
                                          Boost::program_options)
